@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Calculator</title>
+    <link rel="stylesheet" href="../static/calculator.css">
+</head>
+<body>
+    <section class="calculator-page">
+
+        <div class="calculator-header">
+            <h1>Electricity Calculator</h1>
+            <p>Calculate your electricity consumption and costs.</p>
+        </div>
+
+        <div class="calculator-card">
+
+            <p class="error-message">Couldn't calculate electricity cost. Please check your inputs.</p>
+
+            <form method="POST" action="{{ url_for('calculator')}}">
+
+                <div class="form-group">
+                    <label for="appliance">Appliance Name</label>
+                    <input type="text" id="appliance"
+                            name="appliance"
+                            placeholder="e.g. Air Conditioner" required>
+                </div>
+                <div class="form-group">
+                    <label for="wattage">Power Rating (Watts)</label>
+                    <input type="number" id="wattage"
+                            name="wattage" min="1" step="any"
+                            placeholder="e.g. 1200" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity"
+                            name="quantity" min="1"
+                            value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="tariff">Tariff (N per kwh)</label>
+                    <input type="number" id="tariff"
+                            name="tariff" min="0" step="any"
+                            value="200" required>
+                </div>
+
+                <button type="submit" class="calculate-btn">
+                    Calculate Electricity Cost
+                </button>
+
+            </form>
+        </div>
+
+
+        {% if result %}
+        <div class="result-card">
+            <h2>Calculation Results</h2>
+
+            <div class="result-grid">
+
+                <div class="result-item">
+                    <span>Appliance</span>
+                    <h3>{{ result.appliance }}</h3>
+                </div>
+
+                <div class="result-item">
+                    <span>Daily Consumption</span>
+                    <h3>{{ "%.2f"|format(result.daily_kwh) }} kWh</h3>
+                </div>
+
+                <div class="result-item">
+                    <span>Monthly Consumption</span>
+                    <h3>{{ "%.2f"|format(result.monthly_kwh) }} kWh</h3>
+                </div>
+
+                <div class="result-item">
+                    <span>Estimated Monthly Cost</span>
+                    <h3>₦{{ "{:,.2f}".format(result.monthly_cost) }}</h3>
+                </div>
+
+            </div>
+
+            <p class="result-note">
+                Estimates are based on 30 days of usage.
+                Actual bills may vary.
+            </p>
+        </div>
+        {% endif %}
+
+        </div>
+    </section>
+    
+</body>
+</html>
