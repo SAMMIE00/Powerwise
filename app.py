@@ -143,6 +143,7 @@ def dashboard():
         "dashboard.html",
         summary=analysis["summary"],
         appliances=analysis["appliances"],
+        rate=DEFAULT_RATE_PER_KWH,
         active_page="dashboard"
     )
 
