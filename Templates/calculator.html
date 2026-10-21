@@ -1,120 +1,99 @@
-{% extends "base.html" %}
 
-{% block title %}Electricity Calculator | PowerWise{% endblock %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Calculator | PowerWise</title>
 
-{% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='calculator.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='calculator.css') }}">
+</head>
+<body>
 
-<div class="calculator-page">
+    <main class="calculator-page">
 
-    <div class="calculator-header">
-        <div class="header-icon">⚡</div>
-        <div>
-            <h1>Electricity Calculator</h1>
-            <p>Calculate your daily and monthly electricity consumption and cost.</p>
-        </div>
-    </div>
+        <header class="page-header">
+            <div class="page-title">
+                <p class="eyebrow">POWERWISE ANALYZER</p>
+                <h1>Electricity Calculator</h1>
+                <p>Understand your appliance consumption and electricity costs.</p>
+            </div>
 
-    <div class="calculator-layout">
+            <button type="button" class="theme-toggle" id="themeToggle"
+                    aria-label="Switch theme">
+                <span id="themeIcon">🌙</span>
+                <span id="themeLabel">Dark mode</span>
+            </button>
+        </header>
 
-        <!-- Calculator Form -->
         <section class="calculator-card">
-            <h2>Appliance Details</h2>
-            <p class="section-description">
-                Enter your appliance information below.
-            </p>
+            <div class="section-heading">
+                <div>
+                    <span class="section-icon">⚡</span>
+                </div>
+                <div>
+                    <h2>Calculate Appliance Usage</h2>
+                    <p>Enter the appliance details below.</p>
+                </div>
+            </div>
 
             {% if error %}
-                <div class="alert-error">
-                    <strong>Error:</strong> {{ error }}
-                </div>
+            <div class="alert alert-error">
+                <strong>Error:</strong> {{ error }}
+            </div>
             {% endif %}
 
             <form method="POST" action="{{ url_for('calculator') }}">
+                <div class="form-grid">
 
-                <div class="form-group">
-                    <label for="name">Appliance Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="e.g. Standing Fan"
-                        value="{{ request.form.get('name', '') }}"
-                        required
-                    >
-                </div>
+                    <div class="form-group">
+                        <label for="name">Appliance name</label>
+                        <input type="text" id="name" name="name"
+                               placeholder="e.g. Electric fan" required>
+                    </div>
 
-                <div class="form-row">
                     <div class="form-group">
                         <label for="category">Category</label>
-                        <select id="category" name="category">
-                            <option value="Cooling">Cooling</option>
-                            <option value="Lighting">Lighting</option>
+                        <select id="category" name="category" required>
+                            <option value="">Choose a category</option>
                             <option value="Kitchen">Kitchen</option>
+                            <option value="Lighting">Lighting</option>
+                            <option value="Cooling">Cooling</option>
                             <option value="Entertainment">Entertainment</option>
-                            <option value="Laundry">Laundry</option>
-                            <option value="Heating">Heating</option>
-                            <option value="General" selected>General</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="wattage">Power Rating (Watts)</label>
-                        <input
-                            type="number"
-                            id="wattage"
-                            name="wattage"
-                            min="1"
-                            step="any"
-                            placeholder="e.g. 75"
-                            value="{{ request.form.get('wattage', '') }}"
-                            required
-                        >
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="quantity">Number of Appliances</label>
-                        <input
-                            type="number"
-                            id="quantity"
-                            name="quantity"
-                            min="1"
-                            step="1"
-                            value="{{ request.form.get('quantity', 1) }}"
-                            required
-                        >
+                        <label for="wattage">Power rating (watts)</label>
+                        <input type="number" id="wattage" name="wattage"
+                               min="0.01" step="any" placeholder="e.g. 100"
+                               required>
                     </div>
 
                     <div class="form-group">
-                        <label for="hours">Hours Used Per Day</label>
-                        <input
-                            type="number"
-                            id="hours"
-                            name="hours"
-                            min="0.1"
-                            max="24"
-                            step="0.1"
-                            placeholder="e.g. 8"
-                            value="{{ request.form.get('hours', '') }}"
-                            required
-                        >
+                        <label for="quantity">Number of appliances</label>
+                        <input type="number" id="quantity" name="quantity"
+                               min="1" step="1" value="1" required>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="rate">Electricity Rate (₦ per kWh)</label>
-                    <input
-                        type="number"
-                        id="rate"
-                        name="rate"
-                        min="0"
-                        step="any"
-                        value="{{ request.form.get('rate', default_rate) }}"
-                        required
-                    >
-                    <small>Default rate: ₦{{ "%.2f"|format(default_rate) }} per kWh.</small>
+                    <div class="form-group">
+                        <label for="hours">Hours used per day</label>
+                        <input type="number" id="hours" name="hours"
+                               min="0.01" max="24" step="any"
+                               placeholder="e.g. 8" required>
+                        <small>Enter a value between 0 and 24 hours.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rate">Electricity rate (₦/kWh)</label>
+                        <input type="number" id="rate" name="rate"
+                               min="0" step="any"
+                               value="{{ default_rate }}" required>
+                    </div>
+
                 </div>
 
                 <div class="form-actions">
@@ -125,108 +104,106 @@
 
                     <button type="submit" name="action" value="save"
                             class="btn btn-primary">
-                        Calculate & Save
+                        <span>Calculate &amp; Save</span>
+                        <span aria-hidden="true">→</span>
                     </button>
                 </div>
-
-                <p class="form-note">
-                    <strong>Calculate Only</strong> shows your estimate without saving
-                    the appliance. <strong>Calculate & Save</strong> adds it to your
-                    appliance list.
-                </p>
-
             </form>
         </section>
 
-        <!-- Results -->
-        <section class="results-card">
-            <h2>Calculation Results</h2>
-            <p class="section-description">
-                Your estimated electricity usage and cost.
+        {% if result %}
+        <section class="results-card" aria-live="polite">
+            <div class="results-heading">
+                <div>
+                    <p class="eyebrow">YOUR ANALYSIS</p>
+                    <h2>{{ result.name }}</h2>
+                    <p class="results-subtitle">Estimated energy consumption and cost</p>
+                </div>
+                <span class="results-badge">Calculated</span>
+            </div>
+
+            <div class="results-grid">
+                <article class="result-item">
+                    <div class="result-label">
+                        <span class="metric-icon teal-icon">⚡</span>
+                        <span>Daily consumption</span>
+                    </div>
+                    <strong>{{ "%.2f"|format(result.daily_kwh) }} <small>kWh</small></strong>
+                </article>
+
+                <article class="result-item">
+                    <div class="result-label">
+                        <span class="metric-icon indigo-icon">📊</span>
+                        <span>Monthly consumption</span>
+                    </div>
+                    <strong>{{ "%.2f"|format(result.monthly_kwh) }} <small>kWh</small></strong>
+                </article>
+
+                <article class="result-item">
+                    <div class="result-label">
+                        <span class="metric-icon teal-icon">₦</span>
+                        <span>Daily cost</span>
+                    </div>
+                    <strong>₦{{ "%.2f"|format(result.daily_cost) }}</strong>
+                </article>
+
+                <article class="result-item result-highlight">
+                    <div class="result-label">
+                        <span class="metric-icon highlight-icon">₦</span>
+                        <span>Estimated monthly cost</span>
+                    </div>
+                    <strong>₦{{ "%.2f"|format(result.monthly_cost) }}</strong>
+                </article>
+            </div>
+
+            <p class="result-note">
+                Monthly estimates use a 30-day month. Actual consumption and
+                bills may vary depending on usage and your electricity tariff.
             </p>
-
-            {% if result %}
-
-                <div class="result-appliance">
-                    <span class="result-icon">⚡</span>
-                    <div>
-                        <h3>{{ result.name }}</h3>
-                        <p>{{ result.category }} · {{ result.quantity }} appliance(s)</p>
-                    </div>
-                </div>
-
-                <div class="result-grid">
-                    <div class="result-box">
-                        <span class="result-label">Daily Consumption</span>
-                        <strong>{{ "%.3f"|format(result.daily_kwh) }}</strong>
-                        <span class="result-unit">kWh/day</span>
-                    </div>
-
-                    <div class="result-box">
-                        <span class="result-label">Monthly Consumption</span>
-                        <strong>{{ "%.2f"|format(result.monthly_kwh) }}</strong>
-                        <span class="result-unit">kWh/month</span>
-                    </div>
-
-                    <div class="result-box cost-box">
-                        <span class="result-label">Daily Cost (Approx.)</span>
-                        <strong>₦{{ "%.2f"|format(result.daily_kwh * result.rate) }}</strong>
-                        <span class="result-unit">per day</span>
-                    </div>
-
-                    <div class="result-box cost-box">
-                        <span class="result-label">Monthly Cost</span>
-                        <strong>₦{{ "{:,.2f}".format(result.monthly_cost) }}</strong>
-                        <span class="result-unit">per 30 days</span>
-                    </div>
-                </div>
-
-                <div class="calculation-breakdown">
-                    <h3>How it is calculated</h3>
-                    <p>
-                        <strong>Daily consumption:</strong>
-                        ({{ result.wattage }} W × {{ result.quantity }} ×
-                        {{ result.hours_per_day }} hours) ÷ 1,000
-                        = {{ "%.3f"|format(result.daily_kwh) }} kWh
-                    </p>
-                    <p>
-                        <strong>Monthly consumption:</strong>
-                        {{ "%.3f"|format(result.daily_kwh) }} kWh × 30 days
-                        = {{ "%.2f"|format(result.monthly_kwh) }} kWh
-                    </p>
-                    <p>
-                        <strong>Monthly cost:</strong>
-                        {{ "%.2f"|format(result.monthly_kwh) }} kWh ×
-                        ₦{{ "%.2f"|format(result.rate) }}
-                        = ₦{{ "{:,.2f}".format(result.monthly_cost) }}
-                    </p>
-                </div>
-
-            {% else %}
-
-                <div class="empty-results">
-                    <div class="empty-icon">📊</div>
-                    <h3>Your results will appear here</h3>
-                    <p>
-                        Fill in the appliance details and click
-                        <strong>Calculate Only</strong> or
-                        <strong>Calculate & Save</strong>.
-                    </p>
-                </div>
-
-            {% endif %}
         </section>
+        {% else %}
+        <section class="empty-results">
+            <div class="empty-icon">📈</div>
+            <h2>Your results will appear here</h2>
+            <p>Enter your appliance details and select Calculate Only to view your estimate.</p>
+        </section>
+        {% endif %}
 
-    </div>
+        <footer class="page-footer">
+            <p>PowerWise <span>•</span> Electricity Usage Analyzer</p>
+        </footer>
 
-    <div class="calculator-tip">
-        <span>💡</span>
-        <p>
-            <strong>Power-saving tip:</strong>
-            Reducing the hours you use high-wattage appliances can help lower
-            your electricity consumption and monthly bill.
-        </p>
-    </div>
+    </main>
 
-</div>
-{% endblock %}
+    <script>
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const themeLabel = document.getElementById("themeLabel");
+        const root = document.documentElement;
+
+        function applyTheme(theme) {
+            root.setAttribute("data-theme", theme);
+
+            const darkMode = theme === "dark";
+            themeIcon.textContent = darkMode ? "☀️" : "🌙";
+            themeLabel.textContent = darkMode ? "Light mode" : "Dark mode";
+            themeToggle.setAttribute(
+                "aria-label",
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+            );
+        }
+
+        const savedTheme = localStorage.getItem("powerwise-theme");
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        themeToggle.addEventListener("click", function () {
+            const nextTheme =
+                root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+
+            applyTheme(nextTheme);
+            localStorage.setItem("powerwise-theme", nextTheme);
+        });
+    </script>
+
+</body>
+</html>
