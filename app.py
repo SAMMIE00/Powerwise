@@ -2,7 +2,7 @@ import json
 import os
 from flask import Flask, render_template, request, redirect, url_for
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="Templates")
 
 # --- CONFIGURATION ---
 DEFAULT_RATE_PER_KWH = 68.0
