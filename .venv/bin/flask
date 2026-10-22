@@ -1,4 +1,4 @@
-#!/home/l2euser/Powerwise/.venv/bin/python
+#!/home/learn-2-earn/Powerwise/.venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
