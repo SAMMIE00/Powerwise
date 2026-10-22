@@ -4,31 +4,38 @@
    Dashboard-matched light and dark themes
    ========================================== */
 
-:root {
+:root,
+[data-theme="light"] {
     color-scheme: light;
 
-    --bg: #f3f5f9;
-    --surface: #ffffff;
-    --surface-2: #f7f9fc;
-    --text: #0f1b2d;
-    --text-2: #475569;
-    --muted: #7b8798;
-    --border: #e4e9f1;
+    --bg: #F3F6F8;
+    --surface: #FFFFFF;
+    --ink: #173239;
+    --muted: #5F7078;
+    --line: #E8EDEF;
 
-    --navy-900: #0a1426;
-    --navy-800: #0f1d38;
-    --teal: #0d9488;
-    --teal-soft: rgba(13, 148, 136, 0.12);
-    --indigo: #4f46e5;
-    --indigo-soft: rgba(79, 70, 229, 0.10);
-    --sky: #0284c7;
+    --teal: #167D70;
+    --teal-dark: #115B53;
+    --teal-pale: #E7F5F1;
+    --lime: #D7F36B;
+    --navy: #173239;
 
-    --grad-primary: linear-gradient(135deg, #4338ca 0%, #0f766e 100%);
-    --grad-top: linear-gradient(135deg, #0f1d38 0%, #1e3a8a 55%, #0d9488 140%);
+    --shadow: 0 12px 40px rgba(27, 53, 57, 0.055);
+
+    --surface-2: var(--teal-pale);
+    --text: var(--ink);
+    --text-2: var(--muted);
+    --border: var(--line);
+    --navy-900: var(--navy);
+    --navy-800: var(--teal-dark);
+    --teal-soft: var(--teal-pale);
+    --indigo: var(--teal-dark);
+    --indigo-soft: var(--teal-pale);
+    --sky: var(--teal);
+    --grad-primary: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 62%, var(--lime) 145%);
+    --grad-top: linear-gradient(135deg, var(--navy) 0%, var(--teal-dark) 58%, var(--teal) 145%);
 
     --radius: 16px;
-    --shadow: 0 1px 2px rgba(15, 27, 45, 0.04),
-              0 8px 24px rgba(15, 27, 45, 0.06);
     --shadow-hover: 0 4px 12px rgba(15, 27, 45, 0.08),
                     0 14px 32px rgba(15, 27, 45, 0.10);
 }
@@ -36,19 +43,20 @@
 [data-theme="dark"] {
     color-scheme: dark;
 
-    --bg: #08101f;
-    --surface: #0f1a2e;
-    --surface-2: #132038;
-    --text: #e8eef8;
-    --text-2: #a9b6c9;
-    --muted: #8b9bb3;
-    --border: #263650;
+    --bg: #101C20;
+    --surface: #192C32;
+    --ink: #F3F6F8;
+    --muted: #A5B5B9;
+    --line: #304348;
 
-    --teal-soft: rgba(45, 212, 191, 0.14);
-    --indigo-soft: rgba(129, 140, 248, 0.16);
+    --teal: #32B5A2;
+    --teal-dark: #167D70;
+    --teal-pale: #203D3B;
+    --lime: #D7F36B;
+    --navy: #173239;
+    --indigo: var(--lime);
 
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.25),
-              0 8px 24px rgba(0, 0, 0, 0.20);
+    --shadow: 0 12px 40px rgba(0, 0, 0, 0.20);
     --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.30),
                     0 14px 32px rgba(0, 0, 0, 0.25);
 }
@@ -96,12 +104,9 @@ select:focus-visible {
 /* Header */
 
 .theme-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
 }
 
 .page-header {

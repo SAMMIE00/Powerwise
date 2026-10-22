@@ -15,15 +15,45 @@
 </head>
 <body>
 
-  <!-- ===== SVG icon sprite (paste your full sprite here, unchanged) ===== -->
+  <!-- Shared SVG icon sprite -->
   <svg class="icon-sprite" width="0" height="0" aria-hidden="true">
-    <symbol id="i-dash" viewBox="0 0 24 24">...</symbol>
-    <symbol id="i-plug" viewBox="0 0 24 24">...</symbol>
-    <symbol id="i-calc" viewBox="0 0 24 24">...</symbol>
-    <symbol id="i-leaf" viewBox="0 0 24 24">...</symbol>
-    <symbol id="i-file" viewBox="0 0 24 24">...</symbol>
-    <symbol id="i-zap" viewBox="0 0 24 24">...</symbol>
-    <symbol id="i-wallet" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-dash" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+      <rect x="13" y="3" width="8" height="5" rx="1.5"/>
+      <rect x="13" y="10" width="8" height="11" rx="1.5"/>
+      <rect x="3" y="13" width="8" height="8" rx="1.5"/>
+    </symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24">
+      <path d="M9 7V3m6 4V3M7 7h10v4a5 5 0 0 1-5 5h0a5 5 0 0 1-5-5V7Zm5 9v5"/>
+    </symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24">
+      <rect x="5" y="2.5" width="14" height="19" rx="2"/>
+      <path d="M8 6h8v4H8zm1 8h.01M12 14h.01M15 14h.01M9 18h.01M12 18h.01M15 18h.01"/>
+    </symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24">
+      <path d="M20.5 3.5C12 3.5 5 5.5 5 13a7 7 0 0 0 7 7c7.5 0 9.5-7 8.5-16.5Z"/>
+      <path d="M3 21c3-5 7-8 13-11"/>
+    </symbol>
+    <symbol id="i-file" viewBox="0 0 24 24">
+      <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/>
+      <path d="M13 2v7h7M8 14h8m-8 4h8"/>
+    </symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24">
+      <path d="m13 2-9 12h7l-1 8 10-13h-7l1-7Z"/>
+    </symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24">
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5v-13Z"/>
+      <path d="M4 6h13a3 3 0 0 1 3 3v2h-5a3 3 0 0 0 0 6h5"/>
+      <path d="M15 14h.01"/>
+    </symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24">
+      <path d="M3 3v18h18"/>
+      <path d="m7 14 4-4 4 3 6-7"/>
+    </symbol>
+    <symbol id="i-freezer" viewBox="0 0 24 24">
+      <rect x="5" y="2.5" width="14" height="19" rx="2"/>
+      <path d="M5 11h14M9 6v2m0 6v3m6-2 2 2m0-4-2 2"/>
+    </symbol>
     <symbol id="i-moon" viewBox="0 0 24 24">
       <path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.5 8.5 0 1 0 20.2 15.4Z"/>
     </symbol>
@@ -31,17 +61,26 @@
       <circle cx="12" cy="12" r="4"/>
       <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
     </symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M5 12h14m-7-7 7 7-7 7"/>
+    </symbol>
   </svg>
 
   <div class="layout">
 
     <!-- ===== Sidebar ===== -->
     <aside class="sidebar">
-      <a class="brand" href="{{ url_for('dashboard') }}">
-        <span class="brand-mark"><svg class="i"><use href="#i-zap"/></svg></span>
-        <span>PowerWise</span>
-      </a>
+      <div class="brand-row">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+          <span class="brand-mark"><svg class="i"><use href="#i-zap"/></svg></span>
+          <span>PowerWise</span>
+        </a>
+        <button class="theme-btn" id="themeBtn" type="button"
+                aria-label="Switch to dark mode" aria-pressed="false">
+          <svg class="i moon" aria-hidden="true"><use href="#i-moon"/></svg>
+          <svg class="i sun" aria-hidden="true"><use href="#i-sun"/></svg>
+        </button>
+      </div>
 
       <div class="nav-label">Workspace </div>
 
@@ -54,19 +93,6 @@
       </nav>
 
       <div class="sidebar-bottom">
-        <button class="theme-btn" id="themeBtn" type="button"
-                aria-label="Switch to dark mode" aria-pressed="false">
-          <span class="theme-btn-icon" aria-hidden="true">
-            <svg class="i moon"><use href="#i-moon"/></svg>
-            <svg class="i sun"><use href="#i-sun"/></svg>
-          </span>
-          <span class="theme-btn-copy">
-            <span class="theme-btn-label" id="themeLabel">Dark mode</span>
-            <span class="theme-btn-caption">Choose theme</span>
-          </span>
-          <span class="theme-btn-status" id="themeStatus">Light</span>
-        </button>
-
         <div class="sidebar-foot">
           <strong>Smart usage tip</strong>
           Start with your highest-consuming appliance. Reducing its daily use can help lower your monthly bill.
@@ -85,17 +111,13 @@
     (function () {
       var root = document.documentElement;
       var btn = document.getElementById("themeBtn");
-      var label = document.getElementById("themeLabel");
-      var status = document.getElementById("themeStatus");
       if (!btn) return;
 
       function apply(theme) {
         var dark = theme === "dark";
         root.setAttribute("data-theme", dark ? "dark" : "light");
-        if (label) label.textContent = dark ? "Light mode" : "Dark mode";
         btn.setAttribute("aria-pressed", String(dark));
         btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-        if (status) status.textContent = dark ? "Dark" : "Light";
       }
 
       var saved = "light";

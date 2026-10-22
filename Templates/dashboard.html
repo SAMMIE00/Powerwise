@@ -27,7 +27,7 @@
     <article class="card stat">
       <div class="stat-head">
         <span class="stat-label">Monthly consumption</span>
-        <span class="stat-icon"><svg class="i"><use href="#i-zap"/></svg></span>
+        <span class="stat-icon"><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg></span>
       </div>
       <span class="stat-value">{{ '%.2f'|format(summary.total_monthly_kwh) }} <small>kWh</small></span>
       <span class="stat-note">{{ '%.2f'|format(summary.total_daily_kwh) }} kWh average per day</span>
@@ -36,7 +36,7 @@
     <article class="card stat cost">
       <div class="stat-head">
         <span class="stat-label">Estimated monthly cost</span>
-        <span class="stat-icon"><svg class="i"><use href="#i-wallet"/></svg></span>
+        <span class="stat-icon"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span>
       </div>
       <span class="stat-value">₦{{ '{:,.2f}'.format(summary.total_monthly_cost) }}</span>
       <span class="stat-note">Based on your current appliance usage</span>
@@ -45,7 +45,7 @@
     <article class="card stat">
       <div class="stat-head">
         <span class="stat-label">Tracked appliances</span>
-        <span class="stat-icon"><svg class="i"><use href="#i-plug"/></svg></span>
+        <span class="stat-icon"><svg class="i" aria-hidden="true"><use href="#i-plug"/></svg></span>
       </div>
       <span class="stat-value">{{ summary.appliance_count }}</span>
       <span class="stat-note">Devices included in this estimate</span>
@@ -54,7 +54,7 @@
     <article class="card stat save">
       <div class="stat-head">
         <span class="stat-label">Potential 20% savings</span>
-        <span class="stat-icon"><svg class="i"><use href="#i-leaf"/></svg></span>
+        <span class="stat-icon"><svg class="i" aria-hidden="true"><use href="#i-leaf"/></svg></span>
       </div>
       <span class="stat-value">₦{{ '{:,.2f}'.format(summary.potential_20pct_savings) }}</span>
       <span class="stat-note">Estimated monthly savings opportunity</span>
@@ -128,7 +128,12 @@
           <span class="rank-num">{{ loop.index }}</span>
           <div class="rank-info">
             <div class="bar-row-top">
-              <span class="name">{{ appliance.name }}</span>
+              <span class="name">
+                {% if appliance.name|lower == 'deep freezer' %}
+                <svg class="i appliance-icon" aria-hidden="true"><use href="#i-freezer"/></svg>
+                {% endif %}
+                {{ appliance.name }}
+              </span>
               <span class="val">{{ '%.2f'|format(appliance.monthly_kwh) }} kWh</span>
             </div>
             <div class="bar-track">
@@ -174,19 +179,19 @@
   <h2 class="section-title">Quick access</h2>
   <section class="quick-links">
     <a class="quick-link" href="{{ url_for('appliances') }}">
-      <span class="ql-icon"><svg class="i"><use href="#i-plug"/></svg></span>
+      <span class="ql-icon"><svg class="i" aria-hidden="true"><use href="#i-plug"/></svg></span>
       <strong>Appliances</strong><span class="sub">Review tracked devices</span>
     </a>
     <a class="quick-link" href="{{ url_for('calculator') }}">
-      <span class="ql-icon"><svg class="i"><use href="#i-calc"/></svg></span>
+      <span class="ql-icon"><svg class="i" aria-hidden="true"><use href="#i-calc"/></svg></span>
       <strong>Calculator</strong><span class="sub">Estimate usage and cost</span>
     </a>
     <a class="quick-link" href="{{ url_for('savings') }}">
-      <span class="ql-icon"><svg class="i"><use href="#i-leaf"/></svg></span>
+      <span class="ql-icon"><svg class="i" aria-hidden="true"><use href="#i-leaf"/></svg></span>
       <strong>Savings</strong><span class="sub">Find ways to spend less</span>
     </a>
     <a class="quick-link" href="{{ url_for('reports') }}">
-      <span class="ql-icon"><svg class="i"><use href="#i-file"/></svg></span>
+      <span class="ql-icon"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg></span>
       <strong>Reports</strong><span class="sub">Detailed cost breakdown</span>
     </a>
   </section>

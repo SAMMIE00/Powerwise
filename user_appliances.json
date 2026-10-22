@@ -22,5 +22,37 @@
         "quantity": 1,
         "hours_per_day": 6.0,
         "id": 3
+    },
+    {
+        "name": "fan",
+        "category": "Electronics",
+        "wattage": 45.0,
+        "quantity": 1,
+        "hours_per_day": 7.0,
+        "id": 4
+    },
+    {
+        "name": "fan",
+        "category": "Electronics",
+        "wattage": 45.0,
+        "quantity": 1,
+        "hours_per_day": 24.0,
+        "id": 5
+    },
+    {
+        "name": "fan",
+        "category": "Cooling",
+        "wattage": 1.01,
+        "quantity": 1,
+        "hours_per_day": 12.01,
+        "id": 6
+    },
+    {
+        "name": "Air Conditional",
+        "category": "Cooling",
+        "wattage": 80.0,
+        "quantity": 1,
+        "hours_per_day": 10.0,
+        "id": 7
     }
 ]
