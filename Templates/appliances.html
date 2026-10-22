@@ -1,24 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {% extends "base.html" %}
-
-{% block title %}Appliances{% endblock %}
-
-{% block content %}
-  <header class="topbar">
-    <div>
-      <p class="eyebrow-label">Devices</p>
-      <h1>Appliances</h1>
-    </div>
-  </header>
-
-  <!-- the rest of this page -->
+{% extends 'base.html' %}
+{% block title %}Powerwise Appliances{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='appliances.css') }}">
 {% endblock %}
-</body>
-</html>
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="eyebrow">Equipment</p>
+        <h1>Appliance overview</h1>
+    </div>
+</section>
+
+<section class="summary-grid">
+    <div class="summary-card highlight">
+        <span>Total monthly consumption</span>
+        <strong>{{ '%.1f' % (appliances|sum(attribute='monthly_kwh')) }} kWh</strong>
+    </div>
+    <div class="summary-card">
+        <span>Top consumer</span>
+        <strong>{{ appliances[0].name }}</strong>
+    </div>
+    <div class="summary-card">
+        <span>Estimated monthly cost</span>
+        <strong>₦{{ '%.2f' % (appliances|sum(attribute='monthly_cost')) }}</strong>
+    </div>
+</section>
+
+<section class="panel table-panel">
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Appliance</th>
+                <th>Wattage</th>
+                <th>Daily usage</th>
+                <th>Monthly kWh</th>
+                <th>Estimated cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appliance in appliances %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ appliance.name }}</td>
+                <td>{{ appliance.watts }} W</td>
+                <td>{{ '%.1f' % appliance.daily_kwh }} kWh</td>
+                <td>{{ '%.1f' % appliance.monthly_kwh }} kWh</td>
+                <td>₦{{ '%.2f' % appliance.monthly_cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<a class="btn estimate-link" href="{{ url_for('calculator') }}">Estimate your own</a>
+{% endblock %}
