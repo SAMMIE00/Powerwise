@@ -6,6 +6,19 @@
     <title>Document</title>
 </head>
 <body>
-    
+    {% extends "base.html" %}
+
+{% block title %}Appliances{% endblock %}
+
+{% block content %}
+  <header class="topbar">
+    <div>
+      <p class="eyebrow-label">Devices</p>
+      <h1>Appliances</h1>
+    </div>
+  </header>
+
+  <!-- the rest of this page -->
+{% endblock %}
 </body>
 </html>

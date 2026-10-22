@@ -1,17 +1,13 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electricity Calculator | PowerWise</title>
+{% block title %}Calculator{% endblock %}
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='calculator.css') }}">
-</head>
-<body>
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='calculator.css') }}">
+{% endblock %}
 
-    <main class="calculator-page">
+{% block content %}
+    <div class="calculator-page">
 
         <header class="page-header">
             <div class="page-title">
@@ -19,12 +15,6 @@
                 <h1>Electricity Calculator</h1>
                 <p>Understand your appliance consumption and electricity costs.</p>
             </div>
-
-            <button type="button" class="theme-toggle" id="themeToggle"
-                    aria-label="Switch theme">
-                <span id="themeIcon">🌙</span>
-                <span id="themeLabel">Dark mode</span>
-            </button>
         </header>
 
         <section class="calculator-card">
@@ -173,37 +163,5 @@
             <p>PowerWise <span>•</span> Electricity Usage Analyzer</p>
         </footer>
 
-    </main>
-
-    <script>
-        const themeToggle = document.getElementById("themeToggle");
-        const themeIcon = document.getElementById("themeIcon");
-        const themeLabel = document.getElementById("themeLabel");
-        const root = document.documentElement;
-
-        function applyTheme(theme) {
-            root.setAttribute("data-theme", theme);
-
-            const darkMode = theme === "dark";
-            themeIcon.textContent = darkMode ? "☀️" : "🌙";
-            themeLabel.textContent = darkMode ? "Light mode" : "Dark mode";
-            themeToggle.setAttribute(
-                "aria-label",
-                darkMode ? "Switch to light mode" : "Switch to dark mode"
-            );
-        }
-
-        const savedTheme = localStorage.getItem("powerwise-theme");
-        applyTheme(savedTheme === "dark" ? "dark" : "light");
-
-        themeToggle.addEventListener("click", function () {
-            const nextTheme =
-                root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-
-            applyTheme(nextTheme);
-            localStorage.setItem("powerwise-theme", nextTheme);
-        });
-    </script>
-
-</body>
-</html>
+    </div>
+{% endblock %}

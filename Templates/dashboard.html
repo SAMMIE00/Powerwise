@@ -1,268 +1,205 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | PowerWise</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
-  <script>
-    try { document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light"); } catch (e) {}
-  </script>
-</head>
-<body>
+{% extends "base.html" %}
 
-  <!-- ===== SVG icon sprite ===== -->
-  <svg class="icon-sprite" width="0" height="0" aria-hidden="true">
-    <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
-    <symbol id="i-plug" viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></symbol>
-    <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/><line x1="16" y1="18" x2="16" y2="18.01"/></symbol>
-    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
-    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
-    <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
-    <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
-    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
-  </svg>
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
 
   {# Ranked appliance list #}
   {% set ranked = (appliances | sort(attribute='monthly_kwh', reverse=true)) if appliances else [] %}
   {% set max_kwh = ranked[0].monthly_kwh if ranked else 0 %}
 
-  <div class="layout">
-
-    <!-- ===== Sidebar ===== -->
-    <aside class="sidebar">
-      <a class="brand" href="{{ url_for('dashboard') }}">
-        <span class="brand-mark"><svg class="i"><use href="#i-zap"/></svg></span>
-        PowerWise
-      </a>
-
-      <div class="nav-label">Workspace</div>
-      <nav class="nav">
-        <a href="{{ url_for('dashboard') }}" class="active"><svg class="i"><use href="../Templates/dashboard.html"/></svg>Dashboard</a>
-        <a href="{{ url_for('appliances') }}"><svg class="i"><use href="../Templates/appliances.html"/></svg>Appliances</a>
-        <a href="{{ url_for('calculator') }}"><svg class="i"><use href="../Templates/calculator.html"/></svg>Calculator</a>
-        <a href="{{ url_for('savings') }}"><svg class="i"><use href="../Templates/savings.html"/></svg>Savings</a>
-        <a href="{{ url_for('reports') }}"><svg class="i"><use href="../Templates/reports.html"/></svg>Reports</a>
-      </nav>
-
-      <div class="sidebar-foot">
-        <strong>Smart usage tip</strong>
-        Start with your highest-consuming appliance. Reducing its daily use can help lower your monthly bill.
+  <header class="topbar">
+    <div>
+      <p class="eyebrow-label">Energy overview</p>
+      <h1>Dashboard</h1>
+      <p>A clear view of your household electricity use over a 30-day period.</p>
+    </div>
+    <div class="controls">
+      <div class="rate-pill">
+        <svg class="i"><use href="#i-zap"/></svg>
+        Energy rate <strong>₦{{ '%.2f'|format(rate) }} / kWh</strong>
       </div>
-    </aside>
+    </div>
+  </header>
 
-    <!-- ===== Main ===== -->
-    <main class="main">
+  <!-- Summary cards -->
+  <section class="cards">
+    <article class="card stat">
+      <div class="stat-head">
+        <span class="stat-label">Monthly consumption</span>
+        <span class="stat-icon"><svg class="i"><use href="#i-zap"/></svg></span>
+      </div>
+      <span class="stat-value">{{ '%.2f'|format(summary.total_monthly_kwh) }} <small>kWh</small></span>
+      <span class="stat-note">{{ '%.2f'|format(summary.total_daily_kwh) }} kWh average per day</span>
+    </article>
 
-      <header class="topbar">
+    <article class="card stat cost">
+      <div class="stat-head">
+        <span class="stat-label">Estimated monthly cost</span>
+        <span class="stat-icon"><svg class="i"><use href="#i-wallet"/></svg></span>
+      </div>
+      <span class="stat-value">₦{{ '{:,.2f}'.format(summary.total_monthly_cost) }}</span>
+      <span class="stat-note">Based on your current appliance usage</span>
+    </article>
+
+    <article class="card stat">
+      <div class="stat-head">
+        <span class="stat-label">Tracked appliances</span>
+        <span class="stat-icon"><svg class="i"><use href="#i-plug"/></svg></span>
+      </div>
+      <span class="stat-value">{{ summary.appliance_count }}</span>
+      <span class="stat-note">Devices included in this estimate</span>
+    </article>
+
+    <article class="card stat save">
+      <div class="stat-head">
+        <span class="stat-label">Potential 20% savings</span>
+        <span class="stat-icon"><svg class="i"><use href="#i-leaf"/></svg></span>
+      </div>
+      <span class="stat-value">₦{{ '{:,.2f}'.format(summary.potential_20pct_savings) }}</span>
+      <span class="stat-note">Estimated monthly savings opportunity</span>
+    </article>
+  </section>
+
+  <!-- Consumption share + Top users -->
+  <section class="grid-2">
+
+    <article class="card">
+      <div class="panel-head">
         <div>
-          <p class="eyebrow-label">Energy overview</p>
-          <h1>Dashboard</h1>
-          <p>A clear view of your household electricity use over a 30-day period.</p>
+          <h2>Consumption share</h2>
+          <p class="panel-description">Each appliance’s contribution to monthly usage</p>
         </div>
-        <div class="controls">
-          <div class="rate-pill">
-            <svg class="i"><use href="#i-zap"/></svg>
-            Energy rate <strong>₦{{ '%.2f'|format(rate) }} / kWh</strong>
-          </div>
-          <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle dark mode" title="Toggle theme">
-            <svg class="i moon"><use href="#i-moon"/></svg>
-            <svg class="i sun"><use href="#i-sun"/></svg>
-          </button>
-        </div>
-      </header>
+        <a class="link" href="{{ url_for('appliances') }}">View appliances <svg class="i"><use href="#i-arrow"/></svg></a>
+      </div>
 
-      <!-- Summary cards -->
-      <section class="cards">
-        <article class="card stat">
-          <div class="stat-head">
-            <span class="stat-label">Monthly consumption</span>
-            <span class="stat-icon"><svg class="i"><use href="#i-zap"/></svg></span>
-          </div>
-          <span class="stat-value">{{ '%.2f'|format(summary.total_monthly_kwh) }} <small>kWh</small></span>
-          <span class="stat-note">{{ '%.2f'|format(summary.total_daily_kwh) }} kWh average per day</span>
-        </article>
-
-        <article class="card stat cost">
-          <div class="stat-head">
-            <span class="stat-label">Estimated monthly cost</span>
-            <span class="stat-icon"><svg class="i"><use href="#i-wallet"/></svg></span>
-          </div>
-          <span class="stat-value">₦{{ '{:,.2f}'.format(summary.total_monthly_cost) }}</span>
-          <span class="stat-note">Based on your current appliance usage</span>
-        </article>
-
-        <article class="card stat">
-          <div class="stat-head">
-            <span class="stat-label">Tracked appliances</span>
-            <span class="stat-icon"><svg class="i"><use href="#i-plug"/></svg></span>
-          </div>
-          <span class="stat-value">{{ summary.appliance_count }}</span>
-          <span class="stat-note">Devices included in this estimate</span>
-        </article>
-
-        <article class="card stat save">
-          <div class="stat-head">
-            <span class="stat-label">Potential 20% savings</span>
-            <span class="stat-icon"><svg class="i"><use href="#i-leaf"/></svg></span>
-          </div>
-          <span class="stat-value">₦{{ '{:,.2f}'.format(summary.potential_20pct_savings) }}</span>
-          <span class="stat-note">Estimated monthly savings opportunity</span>
-        </article>
-      </section>
-
-      <!-- Consumption share + Top users -->
-      <section class="grid-2">
-
-        <article class="card">
-          <div class="panel-head">
-            <div>
-              <h2>Consumption share</h2>
-              <p class="panel-description">Each appliance’s contribution to monthly usage</p>
-            </div>
-            <a class="link" href="{{ url_for('appliances') }}">View appliances <svg class="i"><use href="#i-arrow"/></svg></a>
-          </div>
-
-          {% if appliances %}
-          <div class="donut-wrap">
-            <div class="donut">
-              <svg viewBox="0 0 200 200">
-                <circle class="track" cx="100" cy="100" r="80"/>
-                {% set ns = namespace(offset=0) %}
-                {% for appliance in ranked %}
-                  {% set seg = (appliance.percentage_share / 100) * 502.65 %}
-                  {% set drawn = [seg - 2, 0] | max %}
-                  <circle class="chart-color-{{ loop.index0 % 8 }}" cx="100" cy="100" r="80"
-                          stroke-dasharray="{{ '%.2f'|format(drawn) }} {{ '%.2f'|format(502.65 - drawn) }}"
-                          stroke-dashoffset="-{{ '%.2f'|format(ns.offset) }}"/>
-                  {% set ns.offset = ns.offset + seg %}
-                {% endfor %}
-              </svg>
-              <div class="donut-center">
-                <strong>{{ '%.1f'|format(summary.total_monthly_kwh) }}</strong>
-                <span>kWh per 30 days</span>
-              </div>
-            </div>
-
-            <div class="legend">
-              {% for appliance in ranked %}
-              <div class="legend-item">
-                <span class="dot chart-color-{{ loop.index0 % 8 }}"></span>
-                <span>{{ appliance.name }}</span>
-                <span class="pct">{{ '%.1f'|format(appliance.percentage_share) }}%</span>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% else %}
-          <div class="empty-state">
-            <p>No appliance data yet. Add your first appliance to see your consumption breakdown.</p>
-            <a class="btn" href="{{ url_for('calculator') }}">Open energy calculator <svg class="i"><use href="#i-arrow"/></svg></a>
-          </div>
-          {% endif %}
-        </article>
-
-        <article class="card">
-          <div class="panel-head">
-            <div>
-              <h2>Top energy users</h2>
-              <p class="panel-description">Appliances ranked by monthly consumption</p>
-            </div>
-            <a class="link" href="{{ url_for('reports') }}">Full report <svg class="i"><use href="#i-arrow"/></svg></a>
-          </div>
-
-          {% if appliances %}
-          <ol class="rank-list">
-            {% for appliance in ranked[:6] %}
-            <li class="rank-row">
-              <span class="rank-num">{{ loop.index }}</span>
-              <div class="rank-info">
-                <div class="bar-row-top">
-                  <span class="name">{{ appliance.name }}</span>
-                  <span class="val">{{ '%.2f'|format(appliance.monthly_kwh) }} kWh</span>
-                </div>
-                <div class="bar-track">
-                  <div class="bar-fill chart-color-{{ loop.index0 % 8 }}" data-w="{{ '%.1f'|format((appliance.monthly_kwh / max_kwh * 100) if max_kwh else 0) }}"></div>
-                </div>
-              </div>
-            </li>
+      {% if appliances %}
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg viewBox="0 0 200 200">
+            <circle class="track" cx="100" cy="100" r="80"/>
+            {% set ns = namespace(offset=0) %}
+            {% for appliance in ranked %}
+              {% set seg = (appliance.percentage_share / 100) * 502.65 %}
+              {% set drawn = [seg - 2, 0] | max %}
+              <circle class="chart-color-{{ loop.index0 % 8 }}" cx="100" cy="100" r="80"
+                      stroke-dasharray="{{ '%.2f'|format(drawn) }} {{ '%.2f'|format(502.65 - drawn) }}"
+                      stroke-dashoffset="-{{ '%.2f'|format(ns.offset) }}"/>
+              {% set ns.offset = ns.offset + seg %}
             {% endfor %}
-          </ol>
-          {% else %}
-          <p class="empty">Your ranked appliance breakdown will appear here once you add devices.</p>
-          {% endif %}
-        </article>
-      </section>
-
-      <!-- Biggest energy user -->
-      <section class="card feature">
-        <div class="feature-icon"><svg class="i"><use href="#i-plug"/></svg></div>
-        <div class="feature-body">
-          <div class="eyebrow">Your biggest energy user</div>
-          {% if summary.highest_consumer %}
-            <h3>{{ summary.highest_consumer.name }}</h3>
-            <p class="meta">
-              {{ summary.highest_consumer.wattage }} W × {{ summary.highest_consumer.quantity }} × {{ summary.highest_consumer.hours_per_day }} hours/day
-              · {{ '%.2f'|format(summary.highest_consumer.monthly_kwh) }} kWh/month
-              · ₦{{ '{:,.2f}'.format(summary.highest_consumer.monthly_cost) }}/month
-            </p>
-          {% else %}
-            <h3>Add an appliance to get started</h3>
-            <p class="meta">Your biggest energy user and its estimated monthly cost will appear here.</p>
-          {% endif %}
-          <a class="btn-light" href="{{ url_for('savings') }}">Explore savings <svg class="i"><use href="#i-arrow"/></svg></a>
+          </svg>
+          <div class="donut-center">
+            <strong>{{ '%.1f'|format(summary.total_monthly_kwh) }}</strong>
+            <span>kWh per 30 days</span>
+          </div>
         </div>
-        {% if summary.highest_consumer %}
-        <div class="feature-share">
-          <strong>{{ '%.1f'|format(summary.highest_consumer.percentage_share) }}%</strong>
-          <span>of monthly usage</span>
+
+        <div class="legend">
+          {% for appliance in ranked %}
+          <div class="legend-item">
+            <span class="dot chart-color-{{ loop.index0 % 8 }}"></span>
+            <span>{{ appliance.name }}</span>
+            <span class="pct">{{ '%.1f'|format(appliance.percentage_share) }}%</span>
+          </div>
+          {% endfor %}
         </div>
-        {% endif %}
-      </section>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p>No appliance data yet. Add your first appliance to see your consumption breakdown.</p>
+        <a class="btn" href="{{ url_for('calculator') }}">Open energy calculator <svg class="i"><use href="#i-arrow"/></svg></a>
+      </div>
+      {% endif %}
+    </article>
 
-      <!-- Quick access -->
-      <h2 class="section-title">Quick access</h2>
-      <section class="quick-links">
-        <a class="quick-link" href="{{ url_for('appliances') }}">
-          <span class="ql-icon"><svg class="i"><use href="#i-plug"/></svg></span>
-          <strong>Appliances</strong><span class="sub">Review tracked devices</span>
-        </a>
-        <a class="quick-link" href="{{ url_for('calculator') }}">
-          <span class="ql-icon"><svg class="i"><use href="#i-calc"/></svg></span>
-          <strong>Calculator</strong><span class="sub">Estimate usage and cost</span>
-        </a>
-        <a class="quick-link" href="{{ url_for('savings') }}">
-          <span class="ql-icon"><svg class="i"><use href="#i-leaf"/></svg></span>
-          <strong>Savings</strong><span class="sub">Find ways to spend less</span>
-        </a>
-        <a class="quick-link" href="{{ url_for('reports') }}">
-          <span class="ql-icon"><svg class="i"><use href="#i-file"/></svg></span>
-          <strong>Reports</strong><span class="sub">Detailed cost breakdown</span>
-        </a>
-      </section>
+    <article class="card">
+      <div class="panel-head">
+        <div>
+          <h2>Top energy users</h2>
+          <p class="panel-description">Appliances ranked by monthly consumption</p>
+        </div>
+        <a class="link" href="{{ url_for('reports') }}">Full report <svg class="i"><use href="#i-arrow"/></svg></a>
+      </div>
 
-    </main>
-  </div>
+      {% if appliances %}
+      <ol class="rank-list">
+        {% for appliance in ranked[:6] %}
+        <li class="rank-row">
+          <span class="rank-num">{{ loop.index }}</span>
+          <div class="rank-info">
+            <div class="bar-row-top">
+              <span class="name">{{ appliance.name }}</span>
+              <span class="val">{{ '%.2f'|format(appliance.monthly_kwh) }} kWh</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill chart-color-{{ loop.index0 % 8 }}" data-w="{{ '%.1f'|format((appliance.monthly_kwh / max_kwh * 100) if max_kwh else 0) }}"></div>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}
+      <p class="empty">Your ranked appliance breakdown will appear here once you add devices.</p>
+      {% endif %}
+    </article>
+  </section>
 
-  <script>
-    // Theme toggle
-    document.getElementById("themeBtn").addEventListener("click", function () {
-      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      try { localStorage.setItem("theme", next); } catch (e) {}
+  <!-- Biggest energy user -->
+  <section class="card feature">
+    <div class="feature-icon"><svg class="i"><use href="#i-plug"/></svg></div>
+    <div class="feature-body">
+      <div class="eyebrow">Your biggest energy user</div>
+      {% if summary.highest_consumer %}
+        <h3>{{ summary.highest_consumer.name }}</h3>
+        <p class="meta">
+          {{ summary.highest_consumer.wattage }} W × {{ summary.highest_consumer.quantity }} × {{ summary.highest_consumer.hours_per_day }} hours/day
+          · {{ '%.2f'|format(summary.highest_consumer.monthly_kwh) }} kWh/month
+          · ₦{{ '{:,.2f}'.format(summary.highest_consumer.monthly_cost) }}/month
+        </p>
+      {% else %}
+        <h3>Add an appliance to get started</h3>
+        <p class="meta">Your biggest energy user and its estimated monthly cost will appear here.</p>
+      {% endif %}
+      <a class="btn-light" href="{{ url_for('savings') }}">Explore savings <svg class="i"><use href="#i-arrow"/></svg></a>
+    </div>
+    {% if summary.highest_consumer %}
+    <div class="feature-share">
+      <strong>{{ '%.1f'|format(summary.highest_consumer.percentage_share) }}%</strong>
+      <span>of monthly usage</span>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- Quick access -->
+  <h2 class="section-title">Quick access</h2>
+  <section class="quick-links">
+    <a class="quick-link" href="{{ url_for('appliances') }}">
+      <span class="ql-icon"><svg class="i"><use href="#i-plug"/></svg></span>
+      <strong>Appliances</strong><span class="sub">Review tracked devices</span>
+    </a>
+    <a class="quick-link" href="{{ url_for('calculator') }}">
+      <span class="ql-icon"><svg class="i"><use href="#i-calc"/></svg></span>
+      <strong>Calculator</strong><span class="sub">Estimate usage and cost</span>
+    </a>
+    <a class="quick-link" href="{{ url_for('savings') }}">
+      <span class="ql-icon"><svg class="i"><use href="#i-leaf"/></svg></span>
+      <strong>Savings</strong><span class="sub">Find ways to spend less</span>
+    </a>
+    <a class="quick-link" href="{{ url_for('reports') }}">
+      <span class="ql-icon"><svg class="i"><use href="#i-file"/></svg></span>
+      <strong>Reports</strong><span class="sub">Detailed cost breakdown</span>
+    </a>
+  </section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Animate ranked bars
+  window.addEventListener("load", function () {
+    document.querySelectorAll(".bar-fill[data-w]").forEach(function (el) {
+      requestAnimationFrame(function () { el.style.width = el.dataset.w + "%"; });
     });
-
-    // Animate ranked bars
-    window.addEventListener("load", function () {
-      document.querySelectorAll(".bar-fill[data-w]").forEach(function (el) {
-        requestAnimationFrame(function () { el.style.width = el.dataset.w + "%"; });
-      });
-    });
-  </script>
-</body>
-</html>
+  });
+</script>
+{% endblock %}

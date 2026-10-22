@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %} | PowerWise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+  <script>
+    try { document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light"); } catch (e) {}
+  </script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ===== SVG icon sprite (paste your full sprite here, unchanged) ===== -->
+  <svg class="icon-sprite" width="0" height="0" aria-hidden="true">
+    <symbol id="i-dash" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-file" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24">...</symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24">
+      <path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.5 8.5 0 1 0 20.2 15.4Z"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">...</symbol>
+  </svg>
+
+  <div class="layout">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('dashboard') }}">
+        <span class="brand-mark"><svg class="i"><use href="#i-zap"/></svg></span>
+        <span>PowerWise</span>
+      </a>
+
+      <div class="nav-label">Workspace </div>
+
+      <nav class="nav">
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}"><svg class="i"><use href="#i-dash"/></svg>Dashboard</a>
+        <a href="{{ url_for('appliances') }}" class="{{ 'active' if request.endpoint == 'appliances' }}"><svg class="i"><use href="#i-plug"/></svg>Appliances</a>
+        <a href="{{ url_for('calculator') }}" class="{{ 'active' if request.endpoint == 'calculator' }}"><svg class="i"><use href="#i-calc"/></svg>Calculator</a>
+        <a href="{{ url_for('savings') }}" class="{{ 'active' if request.endpoint == 'savings' }}"><svg class="i"><use href="#i-leaf"/></svg>Savings</a>
+        <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}"><svg class="i"><use href="#i-file"/></svg>Reports</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="theme-btn" id="themeBtn" type="button"
+                aria-label="Switch to dark mode" aria-pressed="false">
+          <span class="theme-btn-icon" aria-hidden="true">
+            <svg class="i moon"><use href="#i-moon"/></svg>
+            <svg class="i sun"><use href="#i-sun"/></svg>
+          </span>
+          <span class="theme-btn-copy">
+            <span class="theme-btn-label" id="themeLabel">Dark mode</span>
+            <span class="theme-btn-caption">Choose theme</span>
+          </span>
+          <span class="theme-btn-status" id="themeStatus">Light</span>
+        </button>
+
+        <div class="sidebar-foot">
+          <strong>Smart usage tip</strong>
+          Start with your highest-consuming appliance. Reducing its daily use can help lower your monthly bill.
+        </div>
+      </div>
+    </aside>
+
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById("themeBtn");
+      var label = document.getElementById("themeLabel");
+      var status = document.getElementById("themeStatus");
+      if (!btn) return;
+
+      function apply(theme) {
+        var dark = theme === "dark";
+        root.setAttribute("data-theme", dark ? "dark" : "light");
+        if (label) label.textContent = dark ? "Light mode" : "Dark mode";
+        btn.setAttribute("aria-pressed", String(dark));
+        btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+        if (status) status.textContent = dark ? "Dark" : "Light";
+      }
+
+      var saved = "light";
+      try { saved = localStorage.getItem("theme") || "light"; } catch (e) {}
+      apply(saved);
+
+      btn.addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        apply(next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+      });
+    })();
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>
