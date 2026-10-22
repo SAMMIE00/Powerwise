@@ -12,6 +12,7 @@ DATA_FILE = "user_appliances.json"
 
 # --- 1. STORAGE ENGINE ---
 
+
 def load_user_appliances() -> list:
     """Reads user-inserted appliances from a local JSON file."""
     if not os.path.exists(DATA_FILE):
@@ -22,16 +23,47 @@ def load_user_appliances() -> list:
     except (json.JSONDecodeError, IOError):
         return []
 
-
-def save_user_appliance(new_appliance: dict) -> None:
-    """Appends a newly submitted appliance into the JSON store."""
-    appliances = load_user_appliances()
-    new_id = max((item.get("id", 0) for item in appliances), default=0) + 1
-    new_appliance["id"] = new_id
-    appliances.append(new_appliance)
-
+def _write_appliances(appliances: list) -> None:
+    """Single place that writes the JSON file."""
     with open(DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(appliances, file, indent=4)
+
+
+def _is_same_appliance(existing: dict, new: dict) -> bool:
+    """Two entries count as the same appliance if name, wattage and daily hours match."""
+    return (
+        existing["name"].strip().lower() == new["name"].strip().lower()
+        and existing["wattage"] == new["wattage"]
+        and existing["hours_per_day"] == new["hours_per_day"]
+    )
+
+def save_user_appliance(new_appliance: dict) -> bool:
+    """
+    Adds an appliance. If an identical one already exists, adds to its quantity instead.
+    Returns True if merged into an existing entry, False if a new entry was created.
+    """
+    appliances = load_user_appliances()
+
+    for item in appliances:
+        if _is_same_appliance(item, new_appliance):
+            item["quantity"] += new_appliance["quantity"]
+            _write_appliances(appliances)
+            return True
+
+    new_appliance["id"] = max((item.get("id", 0) for item in appliances), default=0) + 1
+    appliances.append(new_appliance)
+    _write_appliances(appliances)
+    return False
+    
+# def save_user_appliance(new_appliance: dict) -> None:
+#     """Appends a newly submitted appliance into the JSON store."""
+#     appliances = load_user_appliances()
+#     new_id = max((item.get("id", 0) for item in appliances), default=0) + 1
+#     new_appliance["id"] = new_id
+#     appliances.append(new_appliance)
+
+#     with open(DATA_FILE, "w", encoding="utf-8") as file:
+#         json.dump(appliances, file, indent=4)
 
 
 def delete_user_appliance(appliance_id: int) -> None:
@@ -178,6 +210,7 @@ def calculator():
                 raise ValueError("Please provide an appliance name (e.g., Standing Fan).")
 
             daily_kwh = calculate_daily_kwh(wattage, quantity, hours_per_day)
+            daily_cost = calculate_monthly_cost(daily_kwh, rate)
             monthly_kwh = calculate_monthly_kwh(wattage, quantity, hours_per_day)
             monthly_cost = calculate_monthly_cost(monthly_kwh, rate)
 
@@ -186,10 +219,14 @@ def calculator():
                 "category": category,
                 "wattage": wattage,
                 "quantity": quantity,
+                "hours": hours_per_day,
                 "hours_per_day": hours_per_day,
                 "daily_kwh": daily_kwh,
+                "daily_cost": daily_cost,
                 "monthly_kwh": monthly_kwh,
                 "monthly_cost": monthly_cost,
+                "yearly_kwh": round(monthly_kwh * 12, 2),
+                "yearly_cost": round(monthly_cost * 12, 2),
                 "rate": rate
             }
 
