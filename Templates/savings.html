@@ -1,0 +1,216 @@
+
+{% extends "base.html" %}
+
+{% block title %}Energy Saving Tips | PowerWise{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='savings.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="savings-page">
+
+    <header class="page-header savings-header">
+        <div class="header-content">
+            <p class="eyebrow">POWERWISE ENERGY GUIDE</p>
+            <h1>Save energy. Spend less.</h1>
+            <p>
+                Discover practical ways to reduce electricity consumption
+                and save money on your prepaid meter.
+            </p>
+        </div>
+    </header>
+
+    {% if appliances %}
+    <section class="savings-summary">
+        <div>
+            <p class="eyebrow">YOUR BIGGEST ENERGY USER</p>
+            <h2>{{ appliances|sort(attribute='monthly_kwh', reverse=true)|first and (appliances|sort(attribute='monthly_kwh', reverse=true)|first).name }}</h2>
+            <p>
+                Start by reviewing how often you use this appliance.
+                Reducing unnecessary usage may lower your monthly bill.
+            </p>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- <section class="savings-intro">
+         <h2>Small changes can make a difference</h2>
+        <p>
+            You do not have to stop using your appliances. Simple changes
+            to how and when you use them can help reduce electricity costs. 
+        </p>
+    </section> -->
+
+    <section class="tip-search" aria-label="Find an appliance saving tip">
+        <label for="appliance-search">Which appliance do you want to save energy on?</label>
+        <input
+            id="appliance-search"
+            type="search"
+            placeholder="e.g. Deep Freezer, fan, or air conditioner"
+            autocomplete="off"
+            aria-controls="savings-tip-results"
+        >
+        <p id="tip-search-status" aria-live="polite">Type an appliance name to see a saving tip.</p>
+    </section>
+
+    <section class="tips-grid" id="savings-tip-results" aria-label="Appliance saving tips" hidden>
+
+        <article class="tip-card" id="lighting" data-appliance-keywords="light, lights, bulb, bulbs, lamp, lighting" hidden>
+            <p class="eyebrow">LIGHTING</p>
+            <h2>Use lights efficiently</h2>
+            <ul>
+                <li>Switch off lights when leaving an empty room.</li>
+                <li>Use LED bulbs where possible.</li>
+                <li>Make use of natural daylight during the day.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="fans" data-appliance-keywords="fan, ceiling fan, standing fan" hidden>
+            <p class="eyebrow">COOLING</p>
+            <h2>Reduce fan usage</h2>
+            <ul>
+                <li>Switch off fans when nobody is in the room.</li>
+                <li>Use an appropriate fan speed for your comfort.</li>
+                <li>Clean fan blades regularly.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="air-conditioning" data-appliance-keywords="air conditioner, air conditioning, ac" hidden>
+            <p class="eyebrow">AIR CONDITIONING</p>
+            <h2>Cool rooms wisely</h2>
+            <ul>
+                <li>Keep doors and windows closed while cooling.</li>
+                <li>Clean air filters regularly.</li>
+                <li>Use a moderate temperature setting.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="refrigerators" data-appliance-keywords="fridge, refrigerator, freezer, deep freezer" hidden>
+            <p class="eyebrow">REFRIGERATION</p>
+            <h2>Use your fridge efficiently</h2>
+            <ul>
+                <li>Avoid leaving the refrigerator door open.</li>
+                <li>Check that the door seals close properly.</li>
+                <li>Allow hot food to cool before refrigerating it.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="electronics" data-appliance-keywords="tv, television, computer, laptop, charger, decoder, router, electronics" hidden>
+            <p class="eyebrow">ELECTRONICS</p>
+            <h2>Cut standby consumption</h2>
+            <ul>
+                <li>Switch off devices when they are not needed.</li>
+                <li>Unplug chargers that are not in use.</li>
+                <li>Use power-saving settings where available.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="irons" data-appliance-keywords="iron, irons" hidden>
+            <p class="eyebrow">IRONING</p>
+            <h2>Plan your ironing</h2>
+            <ul>
+                <li>Iron several clothes in one session.</li>
+                <li>Sort clothes by the temperature they require.</li>
+                <li>Switch off the iron immediately after use.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="washing-machines" data-appliance-keywords="washing machine, washer" hidden>
+            <p class="eyebrow">LAUNDRY</p>
+            <h2>Wash full loads</h2>
+            <ul>
+                <li>Wash full, appropriate loads instead of many small ones.</li>
+                <li>Use a suitable wash cycle.</li>
+                <li>Avoid unnecessary repeat washes.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="kitchen" data-appliance-keywords="cooker, oven, microwave, kettle, blender, toaster, stove" hidden>
+            <p class="eyebrow">KITCHEN</p>
+            <h2>Cook more efficiently</h2>
+            <ul>
+                <li>Use a pot or appliance suitable for the task.</li>
+                <li>Keep lids on pots when appropriate.</li>
+                <li>Switch off electric cooking appliances after use.</li>
+            </ul>
+        </article>
+
+        <article class="tip-card" id="other" hidden>
+            <p class="eyebrow">OTHER APPLIANCES</p>
+            <h2>Check your daily habits</h2>
+            <ul>
+                <li>Review how long each appliance runs every day.</li>
+                <li>Avoid leaving appliances running unnecessarily.</li>
+                <li>Check appliance wattage before buying replacements.</li>
+            </ul>
+        </article>
+
+    </section>
+
+    <section class="savings-callout">
+        <div>
+            <p class="eyebrow">YOUR NEXT STEP</p>
+            <h2>Find out what your appliances cost</h2>
+            <p>
+                Use the calculator to estimate daily and monthly electricity
+                consumption based on wattage and hours of use.
+            </p>
+        </div>
+
+        <a class="btn" href="{{ url_for('calculator') }}">
+            Calculate my usage →
+        </a>
+    </section>
+
+    <footer class="page-footer">
+        <p>PowerWise <span>•</span> Electricity Usage Analyzer</p>
+    </footer>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        const input = document.getElementById("appliance-search");
+        const results = document.getElementById("savings-tip-results");
+        const status = document.getElementById("tip-search-status");
+        const cards = Array.from(results.querySelectorAll(".tip-card"));
+        const fallback = document.getElementById("other");
+
+        input.addEventListener("input", function () {
+            const query = input.value.trim().toLowerCase().replace(/\s+/g, " ");
+            cards.forEach(function (card) {
+                card.hidden = true;
+            });
+
+            if (!query) {
+                results.hidden = true;
+                status.textContent = "Type an appliance name to see a saving tip.";
+                return;
+            }
+
+            const match = cards.find(function (card) {
+                const keywords = (card.dataset.applianceKeywords || "")
+                    .split(",")
+                    .map(function (keyword) { return keyword.trim(); });
+                return keywords.some(function (keyword) {
+                    return keyword === query ||
+                        keyword.includes(query) ||
+                        query.includes(keyword) ||
+                        keyword.split(" ").some(function (word) {
+                            return query.split(" ").some(function (part) {
+                                return part.length >= 3 && word.startsWith(part);
+                            });
+                        });
+                });
+            }) || fallback;
+
+            match.hidden = false;
+            results.hidden = false;
+            status.textContent = "Saving tip for " + input.value.trim() + ":";
+        });
+    })();
+</script>
+{% endblock %}

@@ -54,5 +54,29 @@
         "quantity": 1,
         "hours_per_day": 10.0,
         "id": 7
+    },
+    {
+        "name": "pressing iron",
+        "category": "Electronics",
+        "wattage": 250.0,
+        "quantity": 1,
+        "hours_per_day": 2.0,
+        "id": 8
+    },
+    {
+        "name": "pressing iron",
+        "category": "Electronics",
+        "wattage": 500.0,
+        "quantity": 1,
+        "hours_per_day": 4.0,
+        "id": 9
+    },
+    {
+        "name": "pressing iron",
+        "category": "Electronics",
+        "wattage": 500.0,
+        "quantity": 1,
+        "hours_per_day": 5.0,
+        "id": 10
     }
 ]
