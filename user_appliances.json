@@ -14,5 +14,13 @@
         "quantity": 1,
         "hours_per_day": 24,
         "id": 2
+    },
+    {
+        "name": "fan",
+        "category": "Electronics",
+        "wattage": 40.0,
+        "quantity": 1,
+        "hours_per_day": 6.0,
+        "id": 3
     }
 ]
