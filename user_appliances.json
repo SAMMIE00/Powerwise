@@ -6,13 +6,5 @@
         "quantity": 1,
         "hours_per_day": 4.0,
         "id": 1
-    },
-    {
-        "name": "freezer",
-        "category": "Electronics",
-        "wattage": 200.0,
-        "quantity": 1,
-        "hours_per_day": 5.0,
-        "id": 2
     }
 ]
