@@ -14,15 +14,15 @@
 <section class="summary-grid">
     <div class="summary-card highlight">
         <span>Total monthly consumption</span>
-        <strong>{{ '%.1f' % (appliances|sum(attribute='monthly_kwh')) }} kWh</strong>
+        <strong>{{ '{:,.1f}'.format(appliances|sum(attribute='monthly_kwh')) }} kWh</strong>
     </div>
     <div class="summary-card">
         <span>Top consumer</span>
-        <strong>{{ appliances[0].name }}</strong>
+        <strong>{{ appliances[0].name if appliances else 'None yet' }}</strong>
     </div>
     <div class="summary-card">
         <span>Estimated monthly cost</span>
-        <strong>₦{{ '%.2f' % (appliances|sum(attribute='monthly_cost')) }}</strong>
+        <strong>₦{{ '{:,.2f}'.format(appliances|sum(attribute='monthly_cost')) }}</strong>
     </div>
 </section>
 
@@ -36,6 +36,7 @@
                 <th>Daily usage</th>
                 <th>Monthly kWh</th>
                 <th>Estimated cost</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -43,14 +44,22 @@
             <tr>
                 <td>{{ loop.index }}</td>
                 <td>{{ appliance.name }}</td>
-                <td>{{ appliance.watts }} W</td>
-                <td>{{ '%.1f' % appliance.daily_kwh }} kWh</td>
-                <td>{{ '%.1f' % appliance.monthly_kwh }} kWh</td>
-                <td>₦{{ '%.2f' % appliance.monthly_cost }}</td>
+                <td>{{ '{:,}'.format(appliance.wattage) }} W</td>
+                <td>{{ '{:,.1f}'.format(appliance.daily_kwh) }} kWh</td>
+                <td>{{ '{:,.1f}'.format(appliance.monthly_kwh) }} kWh</td>
+                <td>₦{{ '{:,.2f}'.format(appliance.monthly_cost) }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('remove_appliance', appliance_id=appliance.id) }}">
+                        <button class="delete-button" type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% if not appliances %}
+    <p class="empty-appliances">No appliances yet. Add one using the calculator.</p>
+    {% endif %}
 </section>
 
 <a class="btn estimate-link" href="{{ url_for('calculator') }}">Estimate your own</a>

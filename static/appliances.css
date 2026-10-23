@@ -87,6 +87,29 @@
     background: var(--teal-pale);
 }
 
+.empty-appliances {
+    padding: 1rem;
+    color: var(--muted);
+    text-align: center;
+}
+
+.delete-button {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid #dc2626;
+    border-radius: 8px;
+    background: transparent;
+    color: #dc2626;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background: #dc2626;
+    color: #fff;
+}
+
 .estimate-link {
     display: flex;
     width: fit-content;
@@ -103,6 +126,6 @@
     }
 
     .table-panel table {
-        min-width: 680px;
+        min-width: 760px;
     }
 }
