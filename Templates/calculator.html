@@ -78,6 +78,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="tariff-band">Electric tariff band</label>
+                        <select id="tariff-band">
+                            <option value="">Choose a band (optional)</option>
+                            <option value="209.50">Band A — ₦209.50/kWh</option>
+                            <option value="62.48">Band B — ₦62.48/kWh</option>
+                            <option value="50.00">Band C — ₦50.00/kWh</option>
+                            <option value="43.00">Band D — ₦43.00/kWh</option>
+                            <option value="40.00">Band E — ₦40.00/kWh</option>
+                        </select>
+                        <small>Select a band to fill its rate, or enter a custom rate below.</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="rate">Electricity rate (₦/kWh)</label>
                         <input type="number" id="rate" name="rate"
                                min="0" step="any"
@@ -164,4 +177,11 @@
         </footer>
 
     </div>
+    <script>
+        document.getElementById("tariff-band").addEventListener("change", function () {
+            if (this.value) {
+                document.getElementById("rate").value = this.value;
+            }
+        });
+    </script>
 {% endblock %}
