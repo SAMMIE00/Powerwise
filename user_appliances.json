@@ -1,10 +1,1 @@
-[
-    {
-        "name": "fan",
-        "category": "Electronics",
-        "wattage": 40.0,
-        "quantity": 1,
-        "hours_per_day": 4.0,
-        "id": 1
-    }
-]
+[]

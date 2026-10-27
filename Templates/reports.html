@@ -3,13 +3,12 @@
 {% block title %}Reports{% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='reports.css') }}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='reports.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
-  <div class="reports-page">
-
+    <div class="reports-page">
     <header class="topbar">
       <div>
         <h1>⚡ Electricity Usage Analyzer</h1>
@@ -19,39 +18,39 @@
     </header>
 
     <div class="container">
-      <section class="controls">
-        <div>
-          <label for="reportMonth">Report month</label>
-          <input type="month" id="reportMonth">
-        </div>
-        <div>
-          <label for="tariff">Electricity tariff (₦/kWh)</label>
-          <input type="number" id="tariff" value="{{ rate }}" min="0" step="0.01">
-        </div>
-      </section>
+        <section class="controls">
+            <div>
+                <label for="reportMonth">Report month</label>
+                <input type="month" id="reportMonth">
+            </div>
+            <div>
+                <label for="tariff">Electricity tariff (₦/kWh)</label>
+                <input type="number" id="tariff" value="{{ rate }}" readonly aria-readonly="true">
+            </div>
+        </section>
 
       <section class="summary-grid">
         <article class="summary-card">
           <p>Daily Consumption</p>
-          <h2 id="dailyUsage">0 kWh</h2>
+          <h2 id="dailyUsage"></h2>
           <span>Estimated electricity used per day</span>
         </article>
 
         <article class="summary-card">
           <p>Monthly Consumption</p>
-          <h2 id="monthlyUsage">0 kWh</h2>
+          <h2 id="monthlyUsage"></h2>
           <span>Estimated electricity used this month</span>
         </article>
 
         <article class="summary-card">
           <p>Daily Electricity Cost</p>
-          <h2 id="dailyCost">₦0</h2>
+          <h2 id="dailyCost"></h2>
           <span>Estimated daily spending</span>
         </article>
 
         <article class="summary-card">
           <p>Monthly Electricity Cost</p>
-          <h2 id="monthlyCost">₦0</h2>
+          <h2 id="monthlyCost"></h2>
           <span>Estimated monthly spending</span>
         </article>
       </section>
@@ -68,30 +67,27 @@
         </div>
       </section>
 
-      <section class="panel">
-        <h2>Appliance Usage Breakdown</h2>
-        <p class="muted">Edit the appliance details to match your home.</p>
+        <section class="panel">
+            <h2>Appliance Usage Breakdown</h2>
+            <p class="muted">Appliance details are based on your saved appliance usage.</p>
 
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Appliance</th>
-                <th>Power (W)</th>
-                <th>Hours/day</th>
-                <th>Daily kWh</th>
-                <th>Monthly kWh</th>
-                <th>Monthly Cost</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="applianceTable"></tbody>
-          </table>
-        </div>
-        <button class="secondary-button" id="addAppliance" type="button">
-          + Add Appliance
-        </button>
-      </section>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Appliance</th>
+                            <th>Power (W)</th>
+                            <th>Quantity</th>
+                            <th>Hours/day</th>
+                            <th>Daily kWh</th>
+                            <th>Monthly kWh</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applianceTable"></tbody>
+                </table>
+            </div>
+        </section>
 
       <section class="two-column">
         <article class="panel">
@@ -108,17 +104,15 @@
         </article>
       </section>
 
-      <footer>
-        <p>Electricity Usage Analyzer · Estimates only</p>
-        <p>Actual bills may vary depending on your tariff, meter, and usage.</p>
-      </footer>
+        <footer>
+            <p>Electricity Usage Analyzer · Estimates only</p>
+            <p>Actual bills may vary depending on your tariff, meter, and usage.</p>
+        </footer>
     </div>
-
-  </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
-  <script id="serverAppliances" type="application/json">{{ appliances|tojson }}</script>
-  <script id="serverRate" type="application/json">{{ rate|tojson }}</script>
-  <script src="{{ url_for('static', filename='reports.js') }}"></script>
+    <script id="serverAppliances" type="application/json">{{ appliances|tojson }}</script>
+    <script src="{{ url_for('static', filename='reports.js') }}"></script>
 {% endblock %}
