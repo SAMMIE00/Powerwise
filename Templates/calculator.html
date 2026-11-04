@@ -79,15 +79,15 @@
 
                     <div class="form-group">
                         <label for="tariff-band">Electric tariff band</label>
-                        <select id="tariff-band">
-                            <option value="">Choose a band (optional)</option>
-                            <option value="209.50">Band A — ₦209.50/kWh</option>
-                            <option value="62.48">Band B — ₦62.48/kWh</option>
-                            <option value="50.00">Band C — ₦50.00/kWh</option>
-                            <option value="43.00">Band D — ₦43.00/kWh</option>
-                            <option value="40.00">Band E — ₦40.00/kWh</option>
+                        <select id="tariff-band" name="tariff-band">
+                            <option value="">Keep active rate (₦{{ '%.2f'|format(default_rate) }})</option>
+                            <option value="Band A" data-rate="209.50" {{ 'selected' if active_user_band == 'Band A' }}>Band A — ₦209.50/kWh</option>
+                            <option value="Band B" data-rate="62.48" {{ 'selected' if active_user_band == 'Band B' }}>Band B — ₦62.48/kWh</option>
+                            <option value="Band C" data-rate="50.00" {{ 'selected' if active_user_band == 'Band C' }}>Band C — ₦50.00/kWh</option>
+                            <option value="Band D" data-rate="43.00" {{ 'selected' if active_user_band == 'Band D' }}>Band D — ₦43.00/kWh</option>
+                            <option value="Band E" data-rate="40.00" {{ 'selected' if active_user_band == 'Band E' }}>Band E — ₦40.00/kWh</option>
                         </select>
-                        <small>Select a band to fill its rate, or enter a custom rate below.</small>
+                        <small>Selecting a band updates your electricity rate and saves it to your account.</small>
                     </div>
 
                     <div class="form-group">
@@ -179,8 +179,10 @@
     </div>
     <script>
         document.getElementById("tariff-band").addEventListener("change", function () {
-            if (this.value) {
-                document.getElementById("rate").value = this.value;
+            var opt = this.options[this.selectedIndex];
+            var rate = opt.getAttribute("data-rate");
+            if (rate) {
+                document.getElementById("rate").value = rate;
             }
         });
     </script>

@@ -1,28 +1,41 @@
 {% extends 'base.html' %}
-{% block title %}Powerwise Appliances{% endblock %}
+{% block title %}Appliances{% endblock %}
+
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='appliances.css') }}">
 {% endblock %}
+
 {% block content %}
 <section class="page-header">
     <div>
-        <p class="eyebrow">Equipment</p>
-        <h1>Appliance overview</h1>
+        <p class="eyebrow">EQUIPMENT INVENTORY</p>
+        <h1>Appliance Overview</h1>
+        <p style="color: var(--muted); font-size: 0.95rem; margin-top: 0.25rem;">
+            Tracking {{ summary.appliance_count }} device{{ 's' if summary.appliance_count != 1 else '' }} at ₦{{ '%.2f'|format(rate) }}/kWh.
+        </p>
+    </div>
+    <div class="header-actions">
+        {% if appliances %}
+        <form method="post" action="{{ url_for('reset_appliances') }}" onsubmit="return confirm('Are you sure you want to delete all saved appliances? This action cannot be undone.');">
+            <button class="clear-button" type="submit">Clear All Appliances</button>
+        </form>
+        {% endif %}
+        <a class="btn" href="{{ url_for('calculator') }}">+ Add Appliance</a>
     </div>
 </section>
 
 <section class="summary-grid">
     <div class="summary-card highlight">
         <span>Total monthly consumption</span>
-        <strong>{{ '{:,.1f}'.format(appliances|sum(attribute='monthly_kwh')) }} kWh</strong>
+        <strong>{{ '{:,.1f}'.format(summary.total_monthly_kwh) }} kWh</strong>
     </div>
     <div class="summary-card">
-        <span>Top consumer</span>
-        <strong>{{ appliances[0].name if appliances else 'None yet' }}</strong>
+        <span>Top energy consumer</span>
+        <strong>{{ summary.highest_consumer.name if summary.highest_consumer else 'None yet' }}</strong>
     </div>
     <div class="summary-card">
         <span>Estimated monthly cost</span>
-        <strong>₦{{ '{:,.2f}'.format(appliances|sum(attribute='monthly_cost')) }}</strong>
+        <strong>₦{{ '{:,.2f}'.format(summary.total_monthly_cost) }}</strong>
     </div>
 </section>
 
@@ -32,35 +45,54 @@
             <tr>
                 <th>Rank</th>
                 <th>Appliance</th>
-                <th>Wattage</th>
-                <th>Daily usage</th>
+                <th>Category</th>
+                <th>Power</th>
+                <th>Qty</th>
+                <th>Usage</th>
+                <th>Daily kWh</th>
                 <th>Monthly kWh</th>
-                <th>Estimated cost</th>
-                <th>Action</th>
+                <th>Monthly Cost</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for appliance in appliances %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ appliance.name }}</td>
-                <td>{{ '{:,}'.format(appliance.wattage) }} W</td>
-                <td>{{ '{:,.1f}'.format(appliance.daily_kwh) }} kWh</td>
-                <td>{{ '{:,.1f}'.format(appliance.monthly_kwh) }} kWh</td>
-                <td>₦{{ '{:,.2f}'.format(appliance.monthly_cost) }}</td>
+                <td><strong>{{ appliance.name }}</strong></td>
+                <td><span class="category-badge">{{ appliance.category }}</span></td>
+                <td>{{ '{:,}'.format(appliance.wattage|int) }} W</td>
+                <td>{{ appliance.quantity }}</td>
+                <td>{{ appliance.hours_per_day }} hrs/day</td>
+                <td>{{ '{:,.2f}'.format(appliance.daily_kwh) }} kWh</td>
+                <td>{{ '{:,.2f}'.format(appliance.monthly_kwh) }} kWh</td>
+                <td><strong>₦{{ '{:,.2f}'.format(appliance.monthly_cost) }}</strong></td>
                 <td>
-                    <form method="post" action="{{ url_for('remove_appliance', appliance_id=appliance.id) }}">
-                        <button class="delete-button" type="submit">Delete</button>
-                    </form>
+                    <div class="action-group">
+                        <a href="{{ url_for('edit_appliance', appliance_id=appliance.id) }}" class="edit-button">Edit</a>
+                        <form method="post" action="{{ url_for('remove_appliance', appliance_id=appliance.id) }}" onsubmit="return confirm('Delete {{ appliance.name }}?');">
+                            <button class="delete-button" type="submit">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% if not appliances %}
-    <p class="empty-appliances">No appliances yet. Add one using the calculator.</p>
+    <div class="empty-appliances" style="padding: 3rem 1.5rem; text-align: center;">
+        <p style="font-size: 1.1rem; color: var(--ink); font-weight: 600; margin-bottom: 0.5rem;">No appliances recorded yet</p>
+        <p style="color: var(--muted); margin-bottom: 1.25rem;">Start tracking household devices to calculate your electricity consumption.</p>
+        <a class="btn" href="{{ url_for('calculator') }}">Open Energy Calculator →</a>
+    </div>
     {% endif %}
 </section>
 
-<a class="btn estimate-link" href="{{ url_for('calculator') }}">Estimate your own</a>
+{% if appliances %}
+<div class="bottom-actions">
+    <p style="color: var(--muted); font-size: 0.88rem;">Estimates use a 30-day month and active tariff of ₦{{ '%.2f'|format(rate) }}/kWh.</p>
+    <a class="btn estimate-link" href="{{ url_for('calculator') }}">Add Another Appliance →</a>
+</div>
+{% endif %}
+
 {% endblock %}

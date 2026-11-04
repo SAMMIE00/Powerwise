@@ -34,6 +34,31 @@
     </section>
     {% endif %}
 
+    {% if opportunities %}
+    <section class="personalized-opportunities" style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--ink);">Tailored Savings Opportunities</h2>
+        <p style="color: var(--muted); margin-bottom: 1.25rem; font-size: 0.95rem;">
+            Based on your saved appliances and active tariff rate of ₦{{ '%.2f'|format(rate) }}/kWh:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+            {% for item in opportunities %}
+            <article class="tip-card" style="display: block; border-left: 4px solid var(--teal); background: var(--surface); padding: 1.25rem; border-radius: var(--radius); border: 1px solid var(--line);">
+                <p class="eyebrow" style="color: var(--teal); font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">{{ item.name }}</p>
+                <h3 style="font-size: 1.2rem; margin: 0.35rem 0 0.5rem; color: var(--ink);">₦{{ '{:,.2f}'.format(item.monthly_cost) }} <small style="font-size: 0.8rem; color: var(--muted); font-weight: normal;">/ month</small></h3>
+                <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 0.75rem;">
+                    Runs {{ item.hours }} hrs/day ({{ item.wattage }}W).
+                </p>
+                <ul style="font-size: 0.88rem; padding-left: 1.2rem; color: var(--ink); margin: 0;">
+                    <li style="margin-bottom: 0.35rem;"><strong>Reduce 1 hr/day:</strong> saves ~₦{{ '{:,.2f}'.format(item.one_hour_savings) }}/month</li>
+                    <li><strong>Reduce 2 hrs/day:</strong> saves ~₦{{ '{:,.2f}'.format(item.two_hour_savings) }}/month</li>
+                </ul>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
     <!-- <section class="savings-intro">
          <h2>Small changes can make a difference</h2>
         <p>

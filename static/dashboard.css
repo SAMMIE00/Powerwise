@@ -424,3 +424,165 @@ a { color: inherit; text-decoration: none; }
 .feature .btn-light:hover { background: rgba(255, 255, 255, 0.24); }
 .feature .btn-light .i { width: 15px; height: 15px; }
 .feature-body .meta { font-size: 0.88rem; color: rgba(255, 255, 255, 0.75); }
+
+/* ---------- User Account Badge in Sidebar ---------- */
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.sidebar-user .user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--teal);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-user .user-avatar svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sidebar-user .user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user .user-name {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user .user-tariff {
+  display: block;
+  font-size: 0.72rem;
+  color: #96ab99;
+}
+
+.sidebar-user .logout-btn {
+  color: #f87171;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.sidebar-user .logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.sidebar-user .logout-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Flash Messages ---------- */
+.flash-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.flash-alert {
+  padding: 0.85rem 1.15rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.flash-alert.flash-success {
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+}
+
+[data-theme="dark"] .flash-alert.flash-success {
+  background: rgba(6, 95, 70, 0.3);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: #6EE7B7;
+}
+
+.flash-alert.flash-error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+[data-theme="dark"] .flash-alert.flash-error {
+  background: rgba(153, 27, 27, 0.3);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #FCA5A5;
+}
+
+.flash-alert.flash-info {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1E40AF;
+}
+
+[data-theme="dark"] .flash-alert.flash-info {
+  background: rgba(30, 64, 175, 0.3);
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #93C5FD;
+}
+
+.flash-alert.flash-warning {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+}
+
+[data-theme="dark"] .flash-alert.flash-warning {
+  background: rgba(146, 64, 14, 0.3);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #FCD34D;
+}
+
+.flash-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.flash-close:hover {
+  opacity: 1;
+}

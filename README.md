@@ -1,121 +1,152 @@
 # PowerWise
 
-PowerWise is a lightweight Flask web app that helps households estimate electricity use, compare appliance consumption, and identify ways to reduce power costs. Users can input appliance wattage, quantity, and daily runtime, then receive a breakdown of estimated daily and monthly kWh usage and cost.
+PowerWise is a production-ready, multi-user Flask web application designed for Nigerian prepaid-meter households and energy-conscious users to monitor electricity consumption, compare appliance costs, simulate Nigerian electricity tariff bands, and receive tailored energy-saving insights.
 
-## Overview
-
-The app is designed for prepaid-meter households and everyday energy-conscious users who want a quick way to:
-
-- estimate electricity consumption for appliances
-- track saved appliance entries in a local JSON store
-- compare which devices consume the most energy
-- see estimated monthly costs based on a tariff rate
-- review practical energy-saving tips
-- generate a printable report of appliance usage
+---
 
 ## Features
 
-- Dashboard with total monthly consumption, cost, and top energy users
-- Appliance overview table with delete support
-- Electricity calculator for wattage, quantity, and daily hours
-- Tariff-based cost estimation in ₦/kWh
-- Savings tips page with keyword-based appliance suggestions
-- Printable/Downloadable report page with charts and summary data
-- Local JSON persistence for user-entered appliances
+- **Multi-User Account Architecture**: Complete user authentication, secure session handling, and strict per-user data isolation.
+- **Transparent Glassmorphic Interface**: High-fidelity frosted-glass login and registration interface fully compatible with light and dark themes.
+- **Accurate Tariff Band Modeling**: Full persistence for Nigerian NERC electricity tariff bands:
+  - Band A: ₦209.50 / kWh
+  - Band B: ₦62.48 / kWh
+  - Band C: ₦50.00 / kWh
+  - Band D: ₦43.00 / kWh
+  - Band E: ₦40.00 / kWh
+  - Custom user rates
+- **Dynamic Dashboard**: Monthly and daily kWh estimates, bill projection, top energy user rankings, and interactive consumption share visualization.
+- **Complete Appliance CRUD**: Add, edit, rank, and delete appliances, with duplicate merging and batch clearing.
+- **Personalized Savings Engine**: Automatically calculates actionable monthly cost reductions from cutting runtime on your highest-consuming appliances.
+- **Usage Reports & Chart.js Visualizations**: Historical consumption logging, printable reports, and dynamic charts.
+- **Serverless & Vercel Ready**: Ready for serverless deployment with external PostgreSQL (e.g. Neon) and SQLite for local development.
+
+---
 
 ## Tech Stack
 
-- Python 3
-- Flask
-- Jinja2 templates
-- HTML, CSS, and JavaScript
-- JSON file storage for appliance data
+- **Backend**: Python 3.12+, Flask 3.1
+- **Database / ORM**: SQLAlchemy & Flask-SQLAlchemy (PostgreSQL in production, SQLite in development)
+- **Authentication**: Werkzeug secure password hashing (`scrypt`/`pbkdf2`), signed HTTP-only sessions, and brute-force rate limiting
+- **Frontend**: Jinja2 templates, CSS custom properties, vanilla JS, Chart.js
+- **Testing**: pytest (comprehensive test coverage across calculations, models, and routes)
+- **Deployment**: Vercel Serverless Python (`@vercel/python`)
+
+---
 
 ## Project Structure
 
 ```text
 Powerwise/
-├── app.py                 # Flask application and energy calculation logic
-├── Templates/            # HTML templates for dashboard, calculator, reports, etc.
-├── static/               # CSS and JS assets
-├── user_appliances.json  # Local appliance storage
-├── requirements.txt      # Python dependencies
-├── README.md             # Project documentation
-└── tests/                # Test directory (if added later)
+├── api/
+│   └── index.py            # Vercel serverless entrypoint
+├── app.py                  # Main Flask application and calculation engine
+├── auth.py                 # Authentication blueprint & access control
+├── models.py               # SQLAlchemy models (User, Appliance, Settings, History)
+├── manage.py               # CLI management utility (init-db, create-admin, etc.)
+├── migrate_json.py         # Migration utility for legacy JSON data
+├── vercel.json             # Vercel deployment and routing configuration
+├── requirements.txt        # Production dependencies
+├── .env.example            # Environment variables template
+├── .gitignore              # Repository exclusions
+├── Templates/              # Jinja2 HTML templates
+│   ├── base.html
+│   ├── dashboard.html
+│   ├── appliances.html
+│   ├── calculator.html
+│   ├── edit_appliance.html
+│   ├── login.html
+│   ├── register.html
+│   ├── reports.html
+│   └── savings.html
+├── static/                 # CSS stylesheets, SVG assets, and reports.js
+└── tests/
+    └── test_app.py         # Automated pytest test suite
 ```
 
-## Getting Started
+---
 
-### 1. Clone the repository
+## Local Development Setup
+
+### 1. Clone & activate virtual environment
 
 ```bash
 git clone https://github.com/SAMMIE00/Powerwise.git
 cd Powerwise
-```
-
-### 2. Create and activate a virtual environment
-
-```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-On Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-### 3. Install dependencies
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the app
+### 3. Configure environment variables
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` as needed:
+```ini
+FLASK_APP=app.py
+FLASK_ENV=development
+SECRET_KEY=your-secure-random-secret-key
+DATABASE_URL=sqlite:///powerwise.db
+SESSION_COOKIE_SECURE=False
+```
+
+### 4. Initialize database and provision admin
+
+```bash
+python manage.py init-db
+python manage.py create-admin --username admin --email admin@powerwise.ng --password "YourAdminPassword123!"
+```
+
+*(Optional)* If you have legacy data in `user_appliances.json`:
+```bash
+python manage.py migrate-json --username admin --file user_appliances.json
+```
+
+### 5. Run tests
+
+```bash
+pytest tests/ -v
+```
+
+### 6. Start the development server
 
 ```bash
 python app.py
 ```
 
-Then open the app in a browser at:
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000) and sign in.
 
-```text
-http://127.0.0.1:5000/
+---
+
+## Vercel Deployment Instructions
+
+PowerWise is configured for zero-config or `vercel.json` deployment with external PostgreSQL (such as Neon, Supabase, or AWS RDS).
+
+### Step 1: Provision a PostgreSQL Database (e.g., Neon)
+1. Create a free PostgreSQL database on [Neon](https://neon.tech).
+2. Copy your PostgreSQL connection string (`postgresql://user:password@ep-sample.neon.tech/powerwise?sslmode=require`).
+
+### Step 2: Initialize the Production Database
+Run the initialization against your production database before deployment:
+```bash
+DATABASE_URL="your-production-database-url" python manage.py init-db
+DATABASE_URL="your-production-database-url" python manage.py create-admin --username admin --email admin@powerwise.ng --password "StrongProductionPassword123!"
 ```
 
-## How It Works
-
-1. Add an appliance via the Energy Calculator page.
-2. Enter the appliance name, wattage, quantity, and usage hours per day.
-3. The app calculates:
-   - daily kWh consumption
-   - monthly kWh consumption
-   - estimated monthly cost
-4. Saved appliances are aggregated in the dashboard and appliance pages.
-5. The reports page summarizes appliance performance and supports printing.
-
-## Calculation Logic
-
-PowerWise uses the standard electrical consumption formula:
-
-```text
-kWh = (wattage × quantity × hours_per_day) / 1000
-```
-
-Monthly estimates are based on a 30-day month and a configurable electricity tariff rate.
-
-## Key Routes
-
-- `/` - Dashboard
-- `/calculator` - Appliance energy calculator
-- `/appliances` - Stored appliance list
-- `/savings` - Energy-saving recommendations
-- `/reports` - Printable usage and cost analysis
-
-## Notes
-
-- Appliance data persists locally in `user_appliances.json`.
-- The app currently stores a simple per-user local dataset rather than a database.
-- This project is intended as a practical energy-monitoring tool and not a replacement for your utility bill or meter readings.
+### Step 3: Deploy to Vercel
+1. Push your clean code to GitHub.
+2. In Vercel, click **Add New Project** and import the `Powerwise` repository.
+3. In the project **Environment Variables** settings, configure:
+   - `DATABASE_URL`: Your PostgreSQL connection string.
+   - `SECRET_KEY`: A strong cryptographically secure secret key.
+   - `FLASK_ENV`: `production`
+   - `SESSION_COOKIE_SECURE`: `True`
+4. Deploy the project.

@@ -4,7 +4,10 @@
   const dataElement = document.getElementById("serverAppliances");
   if (!dataElement) return;
 
+  const historyElement = document.getElementById("serverHistory");
   const appliances = JSON.parse(dataElement.textContent || "[]");
+  const historyRecords = JSON.parse((historyElement && historyElement.textContent) || "[]");
+
   const usageCanvas = document.getElementById("usageChart");
   const costCanvas = document.getElementById("costChart");
   const reportMonthInput = document.getElementById("reportMonth");
@@ -17,12 +20,13 @@
   const monthlyCost = document.getElementById("monthlyCost");
   const reportContent = document.getElementById("reportContent");
 
-  const rate = Number(tariffInput && tariffInput.value) || 0;
+  const rate = Number(tariffInput && tariffInput.value) || 68.0;
   const formatKwh = (value) => `${Number(value).toFixed(2)} kWh`;
   const formatCurrency = (value) => `₦${Number(value).toLocaleString("en-NG", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}`;
+
   let usageChart = null;
   let costChart = null;
 
@@ -31,101 +35,152 @@
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   }
 
-  function hasReportForSelectedMonth() {
-    return appliances.length > 0 &&
-      reportMonthInput &&
-      reportMonthInput.value === getCurrentMonth();
+  function getReportDataForMonth(selectedMonth) {
+    if (selectedMonth === getCurrentMonth() && appliances.length > 0) {
+      const totalDailyKwh = appliances.reduce((sum, a) => sum + Number(a.daily_kwh || 0), 0);
+      const totalMonthlyKwh = appliances.reduce((sum, a) => sum + Number(a.monthly_kwh || 0), 0);
+      const totalMonthlyCost = appliances.reduce((sum, a) => sum + Number(a.monthly_cost || 0), 0);
+      return {
+        hasData: true,
+        appliances: appliances,
+        totalDailyKwh: totalDailyKwh,
+        totalMonthlyKwh: totalMonthlyKwh,
+        totalMonthlyCost: totalMonthlyCost,
+        rate: rate
+      };
+    }
+
+    const match = historyRecords.find((rec) => rec.recorded_month === selectedMonth);
+    if (match) {
+      const mKwh = Number(match.energy_consumption || 0);
+      const mCost = Number(match.estimated_cost || 0);
+      const histRate = Number(match.tariff_rate || rate);
+      return {
+        hasData: true,
+        appliances: appliances,
+        totalDailyKwh: mKwh / 30,
+        totalMonthlyKwh: mKwh,
+        totalMonthlyCost: mCost,
+        rate: histRate
+      };
+    }
+
+    return {
+      hasData: false,
+      appliances: [],
+      totalDailyKwh: 0,
+      totalMonthlyKwh: 0,
+      totalMonthlyCost: 0,
+      rate: rate
+    };
   }
 
   function renderReport() {
-    const hasReport = hasReportForSelectedMonth();
-    const reportAppliances = hasReport ? appliances : [];
-    const totalDailyKwh = reportAppliances.reduce(
-      (total, appliance) => total + Number(appliance.daily_kwh || 0), 0
-    );
-    const totalMonthlyKwh = reportAppliances.reduce(
-      (total, appliance) => total + Number(appliance.monthly_kwh || 0), 0
-    );
-    const totalMonthlyCost = reportAppliances.reduce(
-      (total, appliance) => total + Number(appliance.monthly_cost || 0), 0
-    );
+    const selectedMonth = reportMonthInput ? reportMonthInput.value : getCurrentMonth();
+    const data = getReportDataForMonth(selectedMonth);
 
-    if (dailyUsage) dailyUsage.textContent = hasReport ? formatKwh(totalDailyKwh) : "";
-    if (monthlyUsage) monthlyUsage.textContent = hasReport ? formatKwh(totalMonthlyKwh) : "";
-    if (dailyCost) dailyCost.textContent = hasReport ? formatCurrency(totalDailyKwh * rate) : "";
-    if (monthlyCost) monthlyCost.textContent = hasReport ? formatCurrency(totalMonthlyCost) : "";
+    if (dailyUsage) dailyUsage.textContent = data.hasData ? formatKwh(data.totalDailyKwh) : "—";
+    if (monthlyUsage) monthlyUsage.textContent = data.hasData ? formatKwh(data.totalMonthlyKwh) : "—";
+    if (dailyCost) dailyCost.textContent = data.hasData ? formatCurrency(data.totalDailyKwh * data.rate) : "—";
+    if (monthlyCost) monthlyCost.textContent = data.hasData ? formatCurrency(data.totalMonthlyCost) : "—";
 
     if (tableBody) {
       tableBody.replaceChildren();
-      reportAppliances.forEach((appliance) => {
-        const row = document.createElement("tr");
-        [
-          appliance.name || "Appliance",
-          `${Number(appliance.wattage || 0).toLocaleString("en-NG")} W`,
-          String(appliance.quantity || 1),
-          `${Number(appliance.hours_per_day || 0).toFixed(2)} hours`,
-          formatKwh(appliance.daily_kwh || 0),
-          formatKwh(appliance.monthly_kwh || 0),
-          formatCurrency(appliance.monthly_cost || 0)
-        ].forEach((value) => {
-          const cell = document.createElement("td");
-          cell.textContent = value;
-          row.appendChild(cell);
+      if (data.hasData) {
+        data.appliances.forEach((appliance) => {
+          const row = document.createElement("tr");
+          [
+            appliance.name || "Appliance",
+            `${Number(appliance.wattage || 0).toLocaleString("en-NG")} W`,
+            String(appliance.quantity || 1),
+            `${Number(appliance.hours_per_day || 0).toFixed(1)} hrs`,
+            formatKwh(appliance.daily_kwh || 0),
+            formatKwh(appliance.monthly_kwh || 0),
+            formatCurrency(appliance.monthly_cost || 0)
+          ].forEach((value) => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+          });
+          tableBody.appendChild(row);
         });
-        tableBody.appendChild(row);
-      });
+      } else {
+        const emptyRow = document.createElement("tr");
+        const emptyCell = document.createElement("td");
+        emptyCell.colSpan = 7;
+        emptyCell.style.textAlign = "center";
+        emptyCell.style.padding = "2rem";
+        emptyCell.style.color = "var(--muted)";
+        emptyCell.textContent = "No appliance data or recorded usage for " + selectedMonth + ".";
+        emptyRow.appendChild(emptyCell);
+        tableBody.appendChild(emptyRow);
+      }
     }
 
     if (reportContent) {
       reportContent.replaceChildren();
-      if (hasReport) {
-        const highestConsumer = reportAppliances.reduce((highest, appliance) =>
+      if (data.hasData) {
+        const highestConsumer = data.appliances.reduce((highest, appliance) =>
           !highest || Number(appliance.monthly_kwh) > Number(highest.monthly_kwh) ? appliance : highest, null);
+
         const reportLines = [
-          `Total Estimated Monthly Bill: ${formatCurrency(totalMonthlyCost)} (${formatKwh(totalMonthlyKwh)})`,
-          `Daily Electricity Expense: ${formatCurrency(totalDailyKwh * rate)} per day`
+          `Total Estimated Monthly Bill: ${formatCurrency(data.totalMonthlyCost)} (${formatKwh(data.totalMonthlyKwh)})`,
+          `Daily Electricity Expense: ${formatCurrency(data.totalDailyKwh * data.rate)} per day`
         ];
 
         if (highestConsumer) {
-          const share = totalMonthlyKwh
-            ? (Number(highestConsumer.monthly_kwh) / totalMonthlyKwh * 100).toFixed(1)
+          const share = data.totalMonthlyKwh > 0
+            ? (Number(highestConsumer.monthly_kwh) / data.totalMonthlyKwh * 100).toFixed(1)
             : "0.0";
           reportLines.push(
-            `Highest Consumer: ${highestConsumer.name} contributes ${share}% of your overall usage (${formatCurrency(highestConsumer.monthly_cost)}/mo).`
+            `Highest Consumer: ${highestConsumer.name} contributes ${share}% of total usage (${formatCurrency(highestConsumer.monthly_cost)}/mo).`
           );
         }
-        reportLines.push(`Potential 20% Energy Savings: ${formatCurrency(totalMonthlyCost * 0.2)} every month.`);
+        reportLines.push(`Potential 20% Energy Savings: ${formatCurrency(data.totalMonthlyCost * 0.2)} every month.`);
 
         reportLines.forEach((line) => {
           const paragraph = document.createElement("p");
           paragraph.textContent = line;
           reportContent.appendChild(paragraph);
         });
+      } else {
+        const emptyPara = document.createElement("p");
+        emptyPara.className = "muted";
+        emptyPara.textContent = "No billing data found for " + selectedMonth + ".";
+        reportContent.appendChild(emptyPara);
       }
     }
 
     if (usageChart && costChart) {
-      usageChart.data.labels = reportAppliances.map((appliance) => appliance.name);
-      usageChart.data.datasets[0].data = reportAppliances.map((appliance) => appliance.daily_kwh);
+      if (data.hasData && data.appliances.length > 0) {
+        usageChart.data.labels = data.appliances.map((a) => a.name);
+        usageChart.data.datasets[0].data = data.appliances.map((a) => a.daily_kwh);
+        costChart.data.labels = data.appliances.map((a) => a.name);
+        costChart.data.datasets[0].data = data.appliances.map((a) => a.monthly_cost);
+      } else {
+        usageChart.data.labels = [];
+        usageChart.data.datasets[0].data = [];
+        costChart.data.labels = [];
+        costChart.data.datasets[0].data = [];
+      }
       usageChart.update();
-      costChart.data.labels = reportAppliances.map((appliance) => appliance.name);
-      costChart.data.datasets[0].data = reportAppliances.map((appliance) => appliance.monthly_cost);
       costChart.update();
     }
   }
 
   function updateReportPeriod() {
     if (!reportMonthInput || !reportPeriod || !reportMonthInput.value) return;
-    if (!hasReportForSelectedMonth()) {
-      reportPeriod.textContent = "No report available for this month.";
-      renderReport();
-      return;
-    }
 
     const [year, month] = reportMonthInput.value.split("-");
     const date = new Date(Number(year), Number(month) - 1, 1);
     const monthName = date.toLocaleString("en-US", { month: "long", year: "numeric" });
-    reportPeriod.textContent = `Billing period: ${monthName} · Electricity rate: ${formatCurrency(rate)}/kWh`;
+    const data = getReportDataForMonth(reportMonthInput.value);
+
+    if (data.hasData) {
+      reportPeriod.textContent = `Billing period: ${monthName} · Tariff rate: ${formatCurrency(data.rate)}/kWh`;
+    } else {
+      reportPeriod.textContent = `No recorded report found for ${monthName}.`;
+    }
     renderReport();
   }
 
@@ -234,6 +289,7 @@
     costChart.options.plugins.tooltip.backgroundColor = currentTheme.tooltipBg;
     costChart.update();
   });
+
   themeObserver.observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"]

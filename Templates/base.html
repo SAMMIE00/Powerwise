@@ -64,6 +64,15 @@
     <symbol id="i-arrow" viewBox="0 0 24 24">
       <path d="M5 12h14m-7-7 7 7-7 7"/>
     </symbol>
+    <symbol id="i-user" viewBox="0 0 24 24">
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-width="2"/>
+      <polyline points="16 17 21 12 16 7" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="21" y1="12" x2="9" y2="12" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
   </svg>
 
   <div class="layout">
@@ -93,6 +102,20 @@
       </nav>
 
       <div class="sidebar-bottom">
+        {% if current_user %}
+        <div class="sidebar-user">
+          <div class="user-avatar" title="{{ current_user.email }}">
+            <svg class="i" aria-hidden="true"><use href="#i-user"/></svg>
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ current_user.username }}</span>
+            <span class="user-tariff">{{ active_user_band }} · ₦{{ '%.2f'|format(active_user_rate) }}</span>
+          </div>
+          <a href="{{ url_for('auth.logout') }}" class="logout-btn" title="Sign out" aria-label="Sign out">
+            <svg class="i" aria-hidden="true"><use href="#i-logout"/></svg>
+          </a>
+        </div>
+        {% endif %}
         <div class="sidebar-foot">
           <strong>Smart usage tip</strong>
           Start with your highest-consuming appliance. Reducing its daily use can help lower your monthly bill.
@@ -103,6 +126,19 @@
 
     <!-- ===== Main ===== -->
     <main class="main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container" role="alert">
+            {% for category, message in messages %}
+              <div class="flash-alert flash-{{ category }}">
+                <span>{{ message }}</span>
+                <button type="button" class="flash-close" aria-label="Dismiss alert" onclick="this.parentElement.remove();">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
       {% block content %}{% endblock %}
     </main>
   </div>

@@ -129,3 +129,82 @@
         min-width: 760px;
     }
 }
+
+/* Additional Appliance Overview Enhancements */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--teal-pale);
+    color: var(--teal);
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .category-badge {
+    background: rgba(50, 181, 162, 0.15);
+    color: #32B5A2;
+}
+
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edit-button {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--teal);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--teal);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.15s ease;
+}
+
+.edit-button:hover {
+    background: var(--teal);
+    color: #fff;
+}
+
+.clear-button {
+    padding: 0.55rem 1rem;
+    border: 1px solid #dc2626;
+    border-radius: 10px;
+    background: transparent;
+    color: #dc2626;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.clear-button:hover {
+    background: #dc2626;
+    color: #fff;
+}
+
+.bottom-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Appliance{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='calculator.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="calculator-page">
+    <header class="page-header">
+        <div class="page-title">
+            <p class="eyebrow">APPLIANCE CONFIGURATION</p>
+            <h1>Edit Appliance</h1>
+            <p>Update power specifications and daily runtime for {{ appliance.name }}.</p>
+        </div>
+    </header>
+
+    <section class="calculator-card">
+        <form method="POST" action="{{ url_for('edit_appliance', appliance_id=appliance.id) }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Appliance name</label>
+                    <input type="text" id="name" name="name"
+                           value="{{ appliance.name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="General" {{ 'selected' if appliance.category == 'General' }}>General</option>
+                        <option value="Kitchen" {{ 'selected' if appliance.category == 'Kitchen' }}>Kitchen</option>
+                        <option value="Lighting" {{ 'selected' if appliance.category == 'Lighting' }}>Lighting</option>
+                        <option value="Cooling" {{ 'selected' if appliance.category == 'Cooling' }}>Cooling</option>
+                        <option value="Entertainment" {{ 'selected' if appliance.category == 'Entertainment' }}>Entertainment</option>
+                        <option value="Electronics" {{ 'selected' if appliance.category == 'Electronics' }}>Electronics</option>
+                        <option value="Other" {{ 'selected' if appliance.category == 'Other' }}>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="wattage">Power rating (watts)</label>
+                    <input type="number" id="wattage" name="wattage"
+                           min="0.01" step="any" value="{{ appliance.wattage }}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Number of appliances</label>
+                    <input type="number" id="quantity" name="quantity"
+                           min="1" step="1" value="{{ appliance.quantity }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="hours">Hours used per day</label>
+                    <input type="number" id="hours" name="hours"
+                           min="0.01" max="24" step="any"
+                           value="{{ appliance.hours_per_day }}" required>
+                    <small>Enter a value between 0.1 and 24 hours.</small>
+                </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="{{ url_for('appliances') }}" class="btn btn-secondary" style="text-decoration: none;">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

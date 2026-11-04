@@ -114,5 +114,6 @@
 
 {% block scripts %}
     <script id="serverAppliances" type="application/json">{{ appliances|tojson }}</script>
+    <script id="serverHistory" type="application/json">{{ history_records|tojson }}</script>
     <script src="{{ url_for('static', filename='reports.js') }}"></script>
 {% endblock %}
