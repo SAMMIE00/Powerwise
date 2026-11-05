@@ -489,12 +489,6 @@ def update_tariff():
     return redirect(request.referrer or url_for("dashboard"))
 
 
-# Ensure tables exist on runs
-with app.app_context():
-    try:
-        db.create_all()
-    except Exception as e:
-        app.logger.warning(f"Could not auto-create tables: {e}")
 
 if __name__ == "__main__":
     app.run(debug=True)
