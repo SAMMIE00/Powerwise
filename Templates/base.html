@@ -73,12 +73,15 @@
       <polyline points="16 17 21 12 16 7" fill="none" stroke="currentColor" stroke-width="2"/>
       <line x1="21" y1="12" x2="9" y2="12" fill="none" stroke="currentColor" stroke-width="2"/>
     </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h16M4 18h16"/>
+    </symbol>
   </svg>
 
   <div class="layout">
 
     <!-- ===== Sidebar ===== -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="brand-row">
         <a class="brand" href="{{ url_for('dashboard') }}">
           <span class="brand-mark"><svg class="i"><use href="#i-zap"/></svg></span>
@@ -94,11 +97,11 @@
       <div class="nav-label">Workspace </div>
 
       <nav class="nav">
-        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}"><svg class="i"><use href="#i-dash"/></svg>Dashboard</a>
-        <a href="{{ url_for('appliances') }}" class="{{ 'active' if request.endpoint == 'appliances' }}"><svg class="i"><use href="#i-plug"/></svg>Appliances</a>
-        <a href="{{ url_for('calculator') }}" class="{{ 'active' if request.endpoint == 'calculator' }}"><svg class="i"><use href="#i-calc"/></svg>Calculator</a>
-        <a href="{{ url_for('savings') }}" class="{{ 'active' if request.endpoint == 'savings' }}"><svg class="i"><use href="#i-leaf"/></svg>Savings</a>
-        <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}"><svg class="i"><use href="#i-file"/></svg>Reports</a>
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}"><svg class="i"><use href="#i-dash"/></svg><span class="nav-text">Dashboard</span></a>
+        <a href="{{ url_for('appliances') }}" class="{{ 'active' if request.endpoint == 'appliances' }}"><svg class="i"><use href="#i-plug"/></svg><span class="nav-text">Appliances</span></a>
+        <a href="{{ url_for('calculator') }}" class="{{ 'active' if request.endpoint == 'calculator' }}"><svg class="i"><use href="#i-calc"/></svg><span class="nav-text">Calculator</span></a>
+        <a href="{{ url_for('savings') }}" class="{{ 'active' if request.endpoint == 'savings' }}"><svg class="i"><use href="#i-leaf"/></svg><span class="nav-text">Savings</span></a>
+        <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}"><svg class="i"><use href="#i-file"/></svg><span class="nav-text">Reports</span></a>
       </nav>
 
       <div class="sidebar-bottom">
@@ -123,9 +126,22 @@
       </div>
     </aside>
 
+    <button class="menu-overlay" id="menuOverlay"
+            type="button" aria-label="Close navigation menu"></button>
 
     <!-- ===== Main ===== -->
     <main class="main">
+      <div class="menu-toolbar">
+        <button class="menu-toggle" id="menuToggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="sidebar">
+          <svg class="i" aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+        <span class="menu-toolbar-label">PowerWise</span>
+      </div>
+
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           <div class="flash-container" role="alert">
@@ -142,6 +158,57 @@
       {% block content %}{% endblock %}
     </main>
   </div>
+
+  <script>
+    (function () {
+      var layout = document.querySelector(".layout");
+      var toggle = document.getElementById("menuToggle");
+      var overlay = document.getElementById("menuOverlay");
+      var sidebar = document.getElementById("sidebar");
+      var mobileQuery = window.matchMedia("(max-width: 760px)");
+
+      if (!layout || !toggle || !overlay || !sidebar) return;
+
+      function updateButton(open) {
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute(
+          "aria-label",
+          open ? "Close navigation menu" : "Open navigation menu"
+        );
+      }
+
+      function closeMobileMenu() {
+        layout.classList.remove("menu-open");
+        updateButton(false);
+      }
+
+      toggle.addEventListener("click", function () {
+        if (mobileQuery.matches) {
+          var open = layout.classList.toggle("menu-open");
+          updateButton(open);
+        } else {
+          layout.classList.toggle("sidebar-collapsed");
+        }
+      });
+
+      overlay.addEventListener("click", closeMobileMenu);
+
+      sidebar.querySelectorAll(".nav a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (mobileQuery.matches) closeMobileMenu();
+        });
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeMobileMenu();
+      });
+
+      mobileQuery.addEventListener("change", function (event) {
+        closeMobileMenu();
+        layout.classList.remove("sidebar-collapsed");
+      });
+    })();
+  </script>
 
   <script>
     (function () {

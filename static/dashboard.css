@@ -586,3 +586,216 @@ a { color: inherit; text-decoration: none; }
 .flash-close:hover {
   opacity: 1;
 }
+
+
+/* ---------- Collapsible PowerWise Navigation ---------- */
+
+.sidebar {
+  transition: width 0.25s ease, transform 0.25s ease;
+}
+
+.menu-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.menu-toolbar-label {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.menu-toggle {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.menu-toggle:hover {
+  background: var(--surface-2);
+  border-color: var(--teal);
+  transform: translateY(-1px);
+}
+
+.menu-toggle:focus-visible,
+.menu-overlay:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.menu-overlay {
+  display: none;
+}
+
+/* Desktop collapsed sidebar */
+.layout.sidebar-collapsed .sidebar {
+  width: 76px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.layout.sidebar-collapsed .brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.layout.sidebar-collapsed .brand > span:not(.brand-mark),
+.layout.sidebar-collapsed .nav-label,
+.layout.sidebar-collapsed .nav a .nav-text,
+.layout.sidebar-collapsed .sidebar-foot,
+.layout.sidebar-collapsed .sidebar-user .user-info {
+  display: none;
+}
+
+.layout.sidebar-collapsed .brand-row {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.layout.sidebar-collapsed .nav a {
+  justify-content: center;
+  padding: 12px 8px;
+  font-size: 0;
+}
+
+.layout.sidebar-collapsed .nav a .i {
+  width: 21px;
+  height: 21px;
+}
+
+.layout.sidebar-collapsed .sidebar-user {
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 8px 4px;
+}
+
+.layout.sidebar-collapsed .sidebar-user .logout-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.layout.sidebar-collapsed .theme-btn {
+  margin: 0 auto;
+}
+
+/* Mobile off-canvas navigation */
+@media (max-width: 760px) {
+  .layout {
+    flex-direction: row;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(290px, 85vw);
+    height: 100dvh;
+    overflow-y: auto;
+    padding: 22px 16px;
+    transform: translateX(-105%);
+    box-shadow: 12px 0 35px rgba(0, 0, 0, 0.18);
+  }
+
+  .layout.menu-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .layout.sidebar-collapsed .sidebar {
+    width: min(290px, 85vw);
+  }
+
+  .layout.sidebar-collapsed .brand > span:not(.brand-mark),
+  .layout.sidebar-collapsed .nav-label,
+  .layout.sidebar-collapsed .sidebar-foot,
+  .layout.sidebar-collapsed .sidebar-user .user-info {
+    display: block;
+  }
+
+  .layout.sidebar-collapsed .nav a {
+    justify-content: flex-start;
+    font-size: 0.93rem;
+    padding: 11px 12px;
+  }
+
+  .layout.sidebar-collapsed .sidebar-user {
+    justify-content: flex-start;
+  }
+
+  .layout.sidebar-collapsed .sidebar-user .logout-btn {
+    width: auto;
+  }
+
+  .nav {
+    flex-direction: column;
+    overflow: visible;
+    gap: 4px;
+  }
+
+  .nav a {
+    white-space: normal;
+    padding: 11px 12px;
+  }
+
+  .nav a.active {
+    box-shadow: inset 3px 0 0 #86efac;
+  }
+
+  .nav-label,
+  .sidebar-foot {
+    display: block;
+  }
+
+  .sidebar-bottom {
+    margin-top: auto;
+  }
+
+  .main {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    padding: 18px 16px 44px;
+  }
+
+  .menu-toolbar {
+    margin-bottom: 20px;
+  }
+
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    border: 0;
+    background: rgba(8, 20, 22, 0.48);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s, visibility 0.25s;
+  }
+
+  .layout.menu-open .menu-overlay {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .menu-toggle,
+  .menu-overlay {
+    transition: none;
+  }
+}
