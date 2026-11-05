@@ -4,6 +4,7 @@ Flask application with SQLAlchemy multi-user persistence, authentication,
 and Nigerian tariff band modeling.
 """
 import os
+import sys
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from flask import (
@@ -19,8 +20,9 @@ from flask import (
 from models import db, User, Appliance, UserSettings, UsageHistory
 from auth import auth_bp, login_required, get_current_user
 
-# Load environment variables
+# Load environment variables (.env and .env.local)
 load_dotenv()
+load_dotenv(".env.local", override=True)
 
 app = Flask(__name__, template_folder="Templates")
 
@@ -31,15 +33,24 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "False").lower() in ("true", "1")
 
-# Database URL handling (convert legacy postgres:// to postgresql:// for SQLAlchemy)
-database_url = os.getenv("DATABASE_URL", "sqlite:///powerwise.db")
+# Database URL handling: Use direct/unpooled connection for schema migrations/CLI,
+# and pooled connection for web application traffic.
+if any("manage.py" in arg for arg in sys.argv):
+    database_url = os.getenv("DATABASE_URL_UNPOOLED") or os.getenv("DATABASE_URL", "sqlite:///powerwise.db")
+else:
+    database_url = os.getenv("DATABASE_URL", "sqlite:///powerwise.db")
+
+# Convert legacy postgres:// or postgresql:// to postgresql+psycopg2:// for SQLAlchemy
 if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+    database_url = database_url.replace("postgres://", "postgresql+psycopg2://", 1)
+elif database_url.startswith("postgresql://") and not database_url.startswith("postgresql+"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
+    "pool_recycle": 300,
 }
 
 # Initialize extensions
@@ -478,10 +489,12 @@ def update_tariff():
     return redirect(request.referrer or url_for("dashboard"))
 
 
-# Ensure tables exist on development runs
+# Ensure tables exist on runs
 with app.app_context():
-    if not database_url.startswith("postgresql"):
+    try:
         db.create_all()
+    except Exception as e:
+        app.logger.warning(f"Could not auto-create tables: {e}")
 
 if __name__ == "__main__":
     app.run(debug=True)

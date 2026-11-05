@@ -23,6 +23,12 @@ class User(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
     updated_at = db.Column(db.DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
+    role = db.Column(
+        db.String(20),
+        nullable=False,
+        default="user",
+        server_default="user"
+    )
 
     # Relationships
     appliances = db.relationship("Appliance", backref="user", cascade="all, delete-orphan", lazy="select")

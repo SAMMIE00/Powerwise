@@ -6,7 +6,7 @@ import re
 import time
 from functools import wraps
 from urllib.parse import urlparse, urljoin
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, jsonify, abort
 from models import db, User, UserSettings
 
 auth_bp = Blueprint("auth", __name__)
@@ -86,6 +86,26 @@ def login_required(f):
             return redirect(url_for("auth.login", next=target))
         return f(*args, **kwargs)
     return decorated_function
+
+
+def admin_required(f):
+    """Restrict a route to authenticated administrator accounts."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user = get_current_user()
+
+        if user.role != "admin":
+            if request.is_json or request.headers.get("Accept") == "application/json":
+                return jsonify({
+                    "error": "Administrator access required",
+                    "status": 403
+                }), 403
+
+            abort(403)
+
+        return f(*args, **kwargs)
+
+    return login_required(decorated_function)
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
