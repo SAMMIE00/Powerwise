@@ -1,0 +1,423 @@
+/* =====================================================
+   PowerWise – Reports / Electricity Usage Analyzer
+   Light and Dark mode support
+   ===================================================== */
+
+:root,
+[data-theme="light"] {
+    color-scheme: light;
+
+    --background: #F3F6F8;
+    --bg: #F3F6F8;
+    --surface: #FFFFFF;
+    --text: #173239;
+    --ink: #173239;
+    --muted: #5F7078;
+    --primary: #167D70;
+    --primary-dark: #115B53;
+    --teal: #167D70;
+    --teal-dark: #115B53;
+    --teal-pale: #E7F5F1;
+    --border: #E8EDEF;
+    --navy: #173239;
+    --lime: #D7F36B;
+    --card-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+    --th-bg: #E7F5F1;
+    --th-color: #115B53;
+    --btn-secondary-bg: #E7F5F1;
+    --btn-secondary-color: #115B53;
+    --btn-secondary-border: #cbe3dc;
+    --input-focus-ring: rgba(22, 125, 112, 0.18);
+    --grad-primary: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 62%, var(--lime) 145%);
+    --grad-top: linear-gradient(135deg, var(--navy) 0%, var(--primary-dark) 58%, var(--primary) 145%);
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --background: #101C20;
+    --bg: #101C20;
+    --surface: #192C32;
+    --text: #F3F6F8;
+    --ink: #F3F6F8;
+    --muted: #A5B5B9;
+    --primary: #32B5A2;
+    --primary-dark: #167D70;
+    --teal: #32B5A2;
+    --teal-dark: #167D70;
+    --teal-pale: #203D3B;
+    --border: #304348;
+    --navy: #173239;
+    --lime: #D7F36B;
+    --card-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    --th-bg: #203D3B;
+    --th-color: #D7F36B;
+    --btn-secondary-bg: #203D3B;
+    --btn-secondary-color: #D7F36B;
+    --btn-secondary-border: #304348;
+    --input-focus-ring: rgba(50, 181, 162, 0.28);
+    --grad-primary: linear-gradient(135deg, #167D70 0%, #32B5A2 62%, var(--lime) 145%);
+    --grad-top: linear-gradient(135deg, #0e181c 0%, #162C32 58%, #167D70 145%);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.5;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.reports-page {
+    color: var(--text);
+}
+
+.reports-page .topbar {
+    background: var(--grad-top);
+    color: white;
+    padding: 24px 28px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--card-shadow);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.reports-page .topbar h1 {
+    margin: 0 0 5px;
+    font-size: 24px;
+    color: #FFFFFF;
+}
+
+.reports-page .topbar p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.report-period-control {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    margin-bottom: 12px;
+}
+
+/* Scoped button styles so they don't break the sidebar themeBtn */
+.reports-page button:not(.theme-btn) {
+    border: 0;
+    border-radius: 8px;
+    background: var(--grad-primary);
+    color: white;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.reports-page button:not(.theme-btn):hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.reports-page .secondary-button {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-color);
+    border: 1px solid var(--btn-secondary-border);
+}
+
+.reports-page .secondary-button:hover {
+    opacity: 0.9;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.controls div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+}
+
+input {
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.summary-card,
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--card-shadow);
+    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.summary-card p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+.summary-card h2 {
+    font-size: 25px;
+    color: var(--text);
+    margin: 12px 0 8px;
+    overflow-wrap: anywhere;
+}
+
+.summary-card span,
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.panel {
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.panel h2 {
+    margin-top: 0;
+    font-size: 19px;
+    color: var(--text);
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.chart-container {
+    position: relative;
+    height: 310px;
+    width: 100%;
+}
+
+.doughnut-container {
+    height: 300px;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 14px;
+    color: var(--text);
+}
+
+th,
+td {
+    text-align: left;
+    padding: 13px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+th {
+    background: var(--th-bg);
+    color: var(--th-color);
+    font-weight: 600;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+table thead tr th:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+table thead tr th:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+td input {
+    width: 95px;
+    padding: 7px 10px;
+}
+
+td .appliance-name {
+    width: 155px;
+}
+
+.btn-remove {
+    background: transparent !important;
+    color: #ef4444 !important;
+    border: none !important;
+    padding: 4px 8px !important;
+    font-size: 16px !important;
+    cursor: pointer;
+    border-radius: 4px !important;
+}
+
+.btn-remove:hover {
+    background: rgba(239, 68, 68, 0.12) !important;
+}
+
+#reportContent {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+#reportContent p {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    margin: 0;
+    color: var(--text);
+}
+
+#reportContent p:last-child {
+    border-bottom: none;
+}
+
+#reportContent strong {
+    color: var(--text);
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 12px 0 25px;
+}
+
+@media (max-width: 900px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .reports-page .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .reports-page .topbar h1 {
+        font-size: 21px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card,
+    .panel {
+        padding: 17px;
+    }
+
+    .chart-container {
+        height: 260px;
+    }
+}
+
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .reports-page .topbar {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        padding: 10px 0;
+    }
+
+    .reports-page .topbar h1 {
+        color: black !important;
+    }
+
+    .reports-page .topbar p {
+        color: #555 !important;
+    }
+
+    #printButton,
+    .report-period-control,
+    .sidebar,
+    .btn-remove {
+        display: none !important;
+    }
+
+    .container {
+        width: 100%;
+        margin: 0;
+    }
+
+    .panel,
+    .summary-card {
+        box-shadow: none !important;
+        border-color: #ddd !important;
+        background: white !important;
+        color: black !important;
+        break-inside: avoid;
+    }
+
+    th {
+        background: #f0f0f0 !important;
+        color: black !important;
+    }
+
+    td {
+        color: black !important;
+    }
+}
